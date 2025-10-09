@@ -109,6 +109,7 @@ html, body {
   width: 320px;
   padding: 30px;
   padding-top: 0px;
+  margin-top: -50px; /* lift the form so it sits just below the logo */
 }
 
 .login__field {
@@ -129,7 +130,10 @@ html, body {
   background: none;
   padding: 10px;
   padding-left: 36px;
-  width: 100%;
+  display: block;
+  /* shorten the underline so it doesn't run edge-to-edge */
+  width: 220px; /* shorter underline */
+  max-width: calc(100% - 40px);
   transition: .2s;
 }
 
@@ -193,8 +197,9 @@ a {
 }
 
 /* Footer always fixed at bottom */
+/* Footer copyright */
 .footer {
-  background-color: #ffffff; /* explicit white background */
+  background-color: #ffffff;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -202,3 +207,24 @@ a {
   color: #6c757d;
   padding: 10px 0;
 }
+
+/* Year black, Brand white */
+.footer .year {
+  color: #4d4444; /* black */
+  font-weight: 600;
+}
+
+.footer .brand {
+  color: #252323; /* white */
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect: invert colors */
+.footer .year:hover {
+  color: #4e4646; /* white */
+}
+
+
+

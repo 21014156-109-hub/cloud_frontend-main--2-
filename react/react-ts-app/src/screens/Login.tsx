@@ -93,14 +93,20 @@ const Login: React.FC = () => {
         </div>
       </div>
 
-      <footer className="footer">
-        <div className="copyright text-muted">
-          &copy; {new Date().getFullYear()}{' '}
-          <a href="https://mobocheck.com" target="_blank" rel="noreferrer">
-            MoboCheck
-          </a>
-        </div>
-      </footer>
+     <footer className="footer">
+  <div className="copyright text-muted">
+    &copy; <span className="year">{new Date().getFullYear()}</span>{' '}
+    <a
+      href="https://mobocheck.com"
+      target="_blank"
+      rel="noreferrer"
+      className="brand"
+    >
+      MoboCheck
+    </a>
+  </div>
+</footer>
+
     </div>
   );
 };
