@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { clientLogin } from '../services/loginService';
 import { setAuthUserData } from '../utils/helper';
 import '../styles/login.css';
@@ -8,6 +8,14 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+
+  // ✅ Disable scroll when Login page mounts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto'; // reset when leaving login page
+    };
+  }, []);
 
   const validate = () => {
     const e: any = {};
@@ -86,7 +94,12 @@ const Login: React.FC = () => {
       </div>
 
       <footer className="footer">
-        <div className="copyright text-muted">&copy; {new Date().getFullYear()} <a href="https://mobocheck.com" target="_blank" rel="noreferrer">MoboCheck</a></div>
+        <div className="copyright text-muted">
+          &copy; {new Date().getFullYear()}{' '}
+          <a href="https://mobocheck.com" target="_blank" rel="noreferrer">
+            MoboCheck
+          </a>
+        </div>
       </footer>
     </div>
   );
