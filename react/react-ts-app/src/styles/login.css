@@ -8,9 +8,9 @@
 .screen {
   background: linear-gradient(90deg, #273143, #273143);
   position: relative;
-  height: 600px;
-  width: 30%;
-  min-width: 380px;
+  height: 570px;
+  width: 70%;
+  min-width: 388px;
   max-width: 460px;
   box-shadow: 0px 0px 24px #273143;
 }
@@ -26,15 +26,16 @@
   justify-content: flex-start;
   align-items: center;
   padding-top: 44px;
-  padding-bottom: 8px;
-  padding-left: 36px;
+  padding-bottom: 108px;
+  padding-left: 50px;
 }
 
 .brand-logo {
-  width: 160px;
+  width: 200px;
   max-width: 72%;
   display: block;
-  margin-left: 6px;
+  margin-left: -15px;
+  margin-top: 8px;
 }
 
 .screen__background {
