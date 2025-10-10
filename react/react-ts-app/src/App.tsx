@@ -1,5 +1,5 @@
 import React from 'react';
-import Login from './auth/Login';
+import Login from './auth/login/Login';
 import './App.css';
 
 export default function App(): JSX.Element {

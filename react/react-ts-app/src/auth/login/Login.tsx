@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { clientLogin } from './loginService';
-import { setAuthUserData } from '../utils/helper';
+import { clientLogin } from '../loginService';
+import { setAuthUserData } from '../../utils/helper';
 import './login.css';
 
 const Login: React.FC = () => {
