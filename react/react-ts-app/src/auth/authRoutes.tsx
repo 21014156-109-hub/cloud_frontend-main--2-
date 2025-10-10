@@ -1,5 +1,4 @@
-import React from 'react';
-import { RouteObject } from 'react-router-dom';
+import type { RouteObject } from 'react-router-dom';
 import Login from './login/Login';
 
 // Example React Router routes for auth module

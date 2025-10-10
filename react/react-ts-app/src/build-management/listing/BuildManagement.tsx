@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import { BuildManagementService } from '../build-management.service';
 import './build-management.css';
 import PaginationLinks from '../../shared-components/PaginationLinks';
@@ -33,6 +34,7 @@ export default function BuildManagement() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileLabelText, setFileLabelText] = useState<string>('Choose file');
   const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
+  const [busy, setBusy] = useState<boolean>(false);
   const modalHeader = useMemo(() => 'Upload Build', []);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -80,6 +82,7 @@ export default function BuildManagement() {
 
   async function uploadFile() {
     if (!selectedFile) return;
+    setBusy(true);
     try {
       const res = await service.uploadBuild(selectedFile);
       if (res.status) {
@@ -87,16 +90,17 @@ export default function BuildManagement() {
         let message = 'Build uploaded successfully';
         if (action === 'created') message = 'Build created successfully';
         else if (action === 'updated') message = 'Build updated successfully';
-        alert(message); // TODO: replace with toast component
+        toast.success(message);
         setDisplayUploadModal(false);
         fetchData(currentPage);
       } else {
-        alert('Upload failed');
+        toast.error('Upload failed');
       }
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const message = (err as any)?.error?.error || 'Upload failed';
-      alert(message);
+      const message = (typeof err === 'object' && err && 'error' in err) ? (err as { error?: { error?: string } }).error?.error : 'Upload failed';
+      toast.error(message || 'Upload failed');
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -122,23 +126,22 @@ export default function BuildManagement() {
   }
 
   async function confirmDelete(buildId: number) {
-    const ok = confirm('Are you sure? You will not be able to recover this!');
-    if (ok) await deleteBuild(buildId);
+    // Simple confirm for now; could replace with a modal later
+    if (window.confirm('Are you sure? You will not be able to recover this!')) await deleteBuild(buildId);
   }
 
   async function deleteBuild(buildId: number) {
     try {
       const res = await service.deleteBuild(buildId);
       if (res.status) {
-        alert('Build deleted successfully');
+        toast.success('Build deleted successfully');
         fetchData(currentPage);
       } else {
-        alert('Delete failed');
+        toast.error('Delete failed');
       }
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const message = (err as any)?.error?.error || 'Delete failed';
-      alert(message);
+      const message = (typeof err === 'object' && err && 'error' in err) ? (err as { error?: { error?: string } }).error?.error : 'Delete failed';
+      toast.error(message || 'Delete failed');
     }
   }
 
@@ -217,7 +220,9 @@ export default function BuildManagement() {
                 Drag & drop your build file here, or click above to select
               </div>
               <div className="text-right mt-3">
-                <button className="btn btn-dark" disabled={!selectedFile} onClick={uploadFile}>Submit</button>
+                <button className="btn btn-dark" disabled={!selectedFile || busy} onClick={uploadFile}>
+                  {busy ? 'Submitting…' : 'Submit'}
+                </button>
                 <button className="btn btn-link ml-2" onClick={() => setDisplayUploadModal(false)}>Cancel</button>
               </div>
             </div>

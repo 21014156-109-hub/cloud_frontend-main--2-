@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { clientLogin } from '../loginService';
-import { setAuthUserData } from '../../utils/helper';
-import './login.css';
-import { toast } from 'react-toastify';
+import { clientLogin } from '../services/loginService';
+import { setAuthUserData } from '../utils/helper';
+import '../styles/login.css';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -19,7 +18,7 @@ const Login: React.FC = () => {
   }, []);
 
   const validate = () => {
-    const e: { username?: string; password?: string } = {};
+    const e: any = {};
     if (!username) e.username = 'Username is required';
     if (!password) e.password = 'Password is required';
     setErrors(e);
@@ -31,17 +30,17 @@ const Login: React.FC = () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      const record = await clientLogin({ username, password });
+      const record: any = await clientLogin({ username, password });
       if (record?.data?.userData && (record.data.userData.roleSlug === 'admin' || record.data.userData.roleSlug === 'client')) {
         if (setAuthUserData(record.data)) {
           window.location.href = '/dashboard';
         }
       } else {
-        toast.error('Un-Authorized User');
+        window.alert('Un-Authorized User');
       }
-    } catch (err: unknown) {
-      const msg = (typeof err === 'object' && err && 'message' in err) ? String((err as { message?: string }).message) : 'Login failed';
-      toast.error(msg);
+    } catch (err: any) {
+      const msg = err?.message || 'Login failed';
+      window.alert(msg);
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import { getAuthUserData, getClientID } from '../utils/helper';
 import { ClientServiceSettingsService } from './clientServiceSettings.service.ts';
 import { UserService } from '../users/user.service';
 import '../styles/client-service-settings.css';
+import { toast } from 'react-toastify';
 
 type ClientOption = { id: number; text: string };
 type ServiceItem = { id: number; title: string; isAssigned: 0 | 1 };
@@ -22,6 +23,7 @@ export default function ClientServiceSettings() {
   const [servicesList, setServicesList] = useState<ServiceItem[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // Breadcrumbs could be plumbed into Layout in the future
 
@@ -77,14 +79,15 @@ export default function ClientServiceSettings() {
     e.preventDefault();
     const clientId = isAdmin ? selectedClient : myClientId;
     if (!clientId) {
-      alert('Please select a client');
+      toast.error('Please select a client');
       return;
     }
     const services = getAssignedServices();
     try {
+      setSaving(true);
       const resp = await clientService.saveClientService({ clientId, services });
       if (resp.status) {
-        alert('Services Added Successfully');
+        toast.success('Services Added Successfully');
         navigate('/client-service-settings');
       }
     } catch (err: unknown) {
@@ -93,8 +96,10 @@ export default function ClientServiceSettings() {
         const e = err as { error?: { message?: string } };
         if (e.error?.message) message = e.error.message;
       }
-      alert(message);
+      toast.error(message);
       navigate('/client-service-settings');
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -182,7 +187,9 @@ export default function ClientServiceSettings() {
                   </div>
                   <div className="row mb-5">
                     <div className="col-sm-11 text-right">
-                      <button className="btn btn-padding btn-dark-custom" type="submit">Submit</button>
+                      <button className="btn btn-padding btn-dark-custom" type="submit" disabled={saving}>
+                        {saving ? 'Saving…' : 'Submit'}
+                      </button>
                     </div>
                   </div>
                 </>
