@@ -34,6 +34,12 @@ export default function DeviceResultAnalysis() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Device Record Analysis', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
+
   async function fetchData(page: number) {
     setCurrentPage(page);
     const resp = await clouddb.getDeviceAnalysisRecords(clientId, page - 1, pageSize);

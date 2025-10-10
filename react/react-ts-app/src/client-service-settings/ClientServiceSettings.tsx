@@ -36,6 +36,12 @@ export default function ClientServiceSettings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Client Service Settings', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
+
   async function fetchClients(term: string = '') {
     try {
       const record = await userService.getRecords(0, 'client', '1', term);

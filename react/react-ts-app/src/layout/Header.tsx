@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import Breadcrumbs from '../shared-components/breadcrumbs/Breadcrumbs';
+import { Breadcrumbs } from '../components';
 import { getAuthUserData, unsetAuthUserData } from '../utils/helper';
 
 export default function Header({ breadcrumb = [] as { name: string; link?: string }[] }) {

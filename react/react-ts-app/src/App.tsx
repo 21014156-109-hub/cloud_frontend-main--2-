@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './auth/login/Login';
-import Dashboard from './dashboard';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 import AuthGuard from './core/guard/authGuard';
 import AdminGuard from './core/guard/adminGuard';
 import BuildManagement from './build-management/listing/BuildManagement';

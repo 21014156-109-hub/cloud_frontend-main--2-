@@ -32,10 +32,16 @@ body {
 }
 
 /* Prevent page-level scrollbars; app will manage internal scrolling in .main-content */
-html, body {
+html, body, #root {
   height: 100%;
-  overflow: hidden;
+  width: 100%;
+  overflow: hidden; /* internal scrolling managed by .main-content */
+  margin: 0;
+  padding: 0;
 }
+
+/* Ensure no default page-level gutters from vendor CSS affect our layout */
+* { box-sizing: border-box; }
 
 h1 {
   font-size: 3.2em;

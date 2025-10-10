@@ -59,6 +59,12 @@ export default function UpdateClientTestSuit() {
     })();
   }, [clientTestSuitId, clientTestSuitService, isAdmin, testSuitesService]);
 
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Update Client Test Suite', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
+
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     try {

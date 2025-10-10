@@ -57,6 +57,12 @@ export default function BuildManagement() {
     fetchData(1);
   }, [fetchData]);
 
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Build Management', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
+
   function pageChange(page: number) {
     fetchData(page);
   }

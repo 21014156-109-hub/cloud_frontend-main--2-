@@ -33,8 +33,8 @@ export default function AddClientTestSuit() {
       } catch {
         // try paginated
         const rec = await testSuitesService.getTestSuites(0, 1000);
-        if (rec.status) {
-          const opts = (rec.data as any[]).map((t: any) => ({ id: t.id, displayName: t.testSuitName || t.name || `Test Suite ${t.id}` }));
+        if (rec.status && Array.isArray(rec.data)) {
+          const opts = (rec.data as unknown as Array<Record<string, unknown>>).map((t) => ({ id: (t.id as number), displayName: String(t.testSuitName ?? t.name ?? `Test Suite ${(t.id as number) ?? ''}`) }));
           setSuiteOptions(opts);
         }
       }
@@ -48,6 +48,12 @@ export default function AddClientTestSuit() {
       else if (u?.clientId) setSelectedClientId(Number(u.clientId));
     }
   }, [isAdmin, testSuitesService]);
+
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Assign Test Suite', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
 
   async function loadClients(term: string) {
     const record = await userService.getRecords(0, 'client', '1', term);

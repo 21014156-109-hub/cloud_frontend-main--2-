@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
 import { CloudDBService } from '../cloudDB.service';
 import { UserService } from '../../users/user.service';
 import PaginationLinks from '../../shared-components/PaginationLinks';
@@ -46,7 +46,12 @@ export default function CloudDBListing() {
   const user = getAuthUserData();
   const isAdmin = user?.roleSlug === 'admin';
 
-  const [paramId] = useState<number>(0);
+  // read optional query param ?id= from URL to support device-analysis links
+  const params = new URLSearchParams(window.location.search);
+  const qid = params.get('id');
+  const [paramId] = useState<number>(qid ? Number(qid) : 0);
+  const tableRef = useRef<HTMLTableElement | null>(null);
+  const topInnerRef = useRef<HTMLDivElement | null>(null);
   const [clientId, setClientId] = useState<number | ''>(isAdmin ? 0 : Number(user?.id || user?.clientId || 0));
   const [clientOptions, setClientOptions] = useState<{ id: number; text: string }[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -126,6 +131,60 @@ export default function CloudDBListing() {
 
   useEffect(() => { fetchData(1); }, [fetchData]);
 
+  // set breadcrumb like Angular
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Device Records', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
+
+  // If page was opened with ?id=... and the user is admin, load device records for analysis
+  useEffect(() => {
+    if (paramId > 0 && isAdmin) {
+      (async function loadAnalysis() {
+        try {
+          const resp = await clouddb.getDevicesRecords(paramId);
+          if (resp.status) {
+            const recs = resp.data as CloudDBRow[];
+            setRecords(recs);
+            setAllRecords(recs);
+            setTotalRecords(recs.length);
+            setTotalPages(1);
+            setIsExportDisabled(false);
+          }
+        } catch {
+          toast.error('Failed to load analysis records');
+        }
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramId, isAdmin]);
+
+  // Setup top scrollbar sync (wrapper1 <-> wrapper2). It uses tableRef and sets a dummy inner element width
+  useEffect(() => {
+    const wrapper1 = document.getElementById('wrapper1');
+    const wrapper2 = document.getElementById('wrapper2');
+    if (!wrapper1 || !wrapper2) return;
+
+    const sync = () => {
+      if (wrapper1 && wrapper2) {
+        wrapper2.scrollLeft = wrapper1.scrollLeft;
+      }
+    };
+    // keep a small inner element width in wrapper1 that matches the table scroll width
+    if (topInnerRef.current && tableRef.current) {
+      topInnerRef.current.style.width = `${tableRef.current.scrollWidth}px`;
+    }
+
+    wrapper1.addEventListener('scroll', sync);
+    wrapper2.addEventListener('scroll', () => { if (wrapper1) wrapper1.scrollLeft = wrapper2.scrollLeft; });
+    window.addEventListener('resize', () => { if (topInnerRef.current && tableRef.current) topInnerRef.current.style.width = `${tableRef.current.scrollWidth}px`; });
+    return () => {
+      wrapper1.removeEventListener('scroll', sync);
+      wrapper2.removeEventListener('scroll', () => { if (wrapper1) wrapper1.scrollLeft = wrapper2.scrollLeft; });
+    };
+  }, [records]);
+
   async function onSearchClick() { fetchData(1); }
 
   async function loadClients(term: string) {
@@ -177,6 +236,65 @@ export default function CloudDBListing() {
       toast.error('Failed to load device details');
     } finally { setDetailLoading(false); }
   }
+
+  // Render detail content with parity to Angular's parseResponse / showBatteryInfo
+  function renderDetailContent(data: CloudDBRow | null) {
+    if (!data) return <div>No details available</div>;
+    // If diagnostics-like fields exist, render passed/failed tables
+    const dd = data as unknown as Record<string, unknown>;
+    const maybeDiag = dd['failedResult'] || dd['passedResult'];
+    if (maybeDiag) {
+      const passedVal = dd['passedResult'];
+      const failedVal = dd['failedResult'];
+      const passed = typeof passedVal === 'string' ? passedVal.split(',') : Array.isArray(passedVal) ? passedVal.map(String) : [];
+      const failed = typeof failedVal === 'string' ? failedVal.split(',') : Array.isArray(failedVal) ? failedVal.map(String) : [];
+  const rows: ReactNode[] = [];
+      for (let i = 0; i < Math.max(passed.length, failed.length); i++) {
+        rows.push(
+          <tr key={i}><td>{passed[i] ?? ''}</td><td>{failed[i] ?? ''}</td></tr>
+        );
+      }
+      return (
+        <table className="table table-striped" style={{ textAlign: 'left' }}>
+          <thead>
+            <tr><th style={{ fontWeight: 'bold' }}>Passed</th><th style={{ fontWeight: 'bold' }}>Failed</th></tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+      );
+    }
+
+    // Battery info - render two columns per row like Angular
+    if (data.batteryInfo && typeof data.batteryInfo === 'object') {
+      const b = data.batteryInfo as Record<string, unknown>;
+  const cells: ReactNode[] = [];
+      let i = 0;
+  const rows: ReactNode[] = [];
+      for (const key in b) {
+        cells.push(<td style={{ fontWeight: 'bold' }} key={`k-${key}`}>{key}</td>);
+  const val = (b as Record<string, unknown>)[key];
+  cells.push(<td key={`v-${key}`}>{String(val ?? '')}</td>);
+        i += 2;
+        if (i === 4) { rows.push(<tr key={`r-${key}`}>{cells.splice(0)} </tr>); i = 0; }
+      }
+      if (cells.length) rows.push(<tr key="last">{cells}</tr>);
+      return (
+        <table className="table table-striped" style={{ textAlign: 'left' }}>
+          <tbody>{rows}</tbody>
+        </table>
+      );
+    }
+
+    // Fallback: pretty JSON
+    return (
+      <div>
+        <p><strong>IMEI:</strong> {text(data.imei)}</p>
+        <p><strong>Serial:</strong> {text(data.serial)}</p>
+        <pre style={{ maxHeight: 300, overflow: 'auto' }}>{JSON.stringify(data, null, 2)}</pre>
+      </div>
+    );
+  }
+
 
   function onColumnChange(checked: boolean, idx: number) {
     setColumns(prev => prev.map((c, i) => i === idx ? { ...c, checked } : c));
@@ -250,7 +368,11 @@ export default function CloudDBListing() {
             </div>
 
             <div className="table-responsive">
-              <table className="table">
+              <div id="wrapper2" className="top-scrollbar" style={{ overflowX: 'auto' }}>
+                <div ref={topInnerRef} />
+              </div>
+              <div id="wrapper1" style={{ overflowX: 'auto' }}>
+                <table className="table" ref={tableRef}>
                 <thead>
                   <tr>
                     <th>Sr No.</th>
@@ -337,7 +459,8 @@ export default function CloudDBListing() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
 
             {detailOpen && (
@@ -346,19 +469,11 @@ export default function CloudDBListing() {
                   <div className="modal-content">
                     <div className="modal-header">
                       <h5 className="modal-title">Device Details</h5>
-                      <button type="button" className="close" onClick={() => setDetailOpen(false)}>×</button>
+                      <button type="button" className="close" onClick={() => setDetailOpen(false)}> d7</button>
                     </div>
                     <div className="modal-body">
                       {detailLoading && <div>Loading...</div>}
-                      {!detailLoading && detailData && (
-                        <div>
-                          <p><strong>IMEI:</strong> {text(detailData.imei)}</p>
-                          <p><strong>Serial:</strong> {text(detailData.serial)}</p>
-                          <p><strong>MDM:</strong> {typeof detailData.mdmResponse === 'object' ? 'See Export' : text(detailData.mdmResponse as string | number | null | undefined)}</p>
-                          <pre style={{ maxHeight: 300, overflow: 'auto' }}>{JSON.stringify(detailData, null, 2)}</pre>
-                        </div>
-                      )}
-                      {!detailLoading && !detailData && <div>No details available</div>}
+                      {!detailLoading && renderDetailContent(detailData)}
                     </div>
                   </div>
                 </div>

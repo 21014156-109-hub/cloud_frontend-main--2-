@@ -50,14 +50,22 @@ const Dashboard: React.FC = () => {
   }
 
   useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Dashboard', link: '' }];
     const auth = getAuthUserData();
-    setIsAdmin(auth ? auth.roleSlug === 'admin' : false);
+    if (auth) {
+      setIsAdmin(auth.roleSlug === 'admin');
+    } else {
+      setIsAdmin(false);
+    }
     getDevicesBytype();
     getStatsCount();
     processedDevicesCountByDate((new Date()).toLocaleString('en-US', { month: '2-digit' }));
     getDevicesCountOfTopUsers();
     getEsnServices();
+    // cleanup on unmount
     return () => {
+      w.__BREADCRUMB = [];
       // cleanup charts on unmount
       allDevicesChart.current?.destroy();
       topUsersChart.current?.destroy();
@@ -137,9 +145,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      {/* Breadcrumb/header placeholder - replace with real header component when available */}
-      <div className="app-header">Dashboard</div>
-
       <div className="container-fluid pt-8">
         <div className="row">
           {isAdmin && (

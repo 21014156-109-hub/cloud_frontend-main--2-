@@ -34,6 +34,12 @@ export default function ClientTestSuitListing() {
 
   useEffect(() => { fetchData(1); }, [fetchData]);
 
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Client Test Suites', link: '' }];
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
+
   function pageChange(page: number) { fetchData(page); }
   function changePage(newSize: number) { setPageSize(newSize); fetchData(1); }
 
