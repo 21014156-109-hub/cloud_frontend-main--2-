@@ -1,0 +1,15 @@
+/* CloudDB listing page specific styles ported from Angular SCSS, simplified for React */
+
+.drop-btn { background-color: #f7f8fd; color: #525f7f; border: 1px solid #dee2e6; }
+.dropdown { position: relative; display: inline-block; }
+.dropdown-content { font-size: 13px; display: none; position: absolute; background-color: #f7f8fd; color: #525f7f; min-width: 160px; box-shadow: 0 8px 16px rgba(0,0,0,.2); z-index: 1; }
+.dropdown:hover .dropdown-content { display: block; width: max-content !important; padding-top: 7px; }
+.dropdown.disabled:hover .dropdown-content { display: none; }
+button { padding: .4rem .85rem; font-size: .79rem; }
+.form-inline label { font-size: .79rem; }
+.search_row button:disabled { pointer-events: none; }
+.column-dropdown { padding: 10px; }
+.column-dropdown ul.columns-list { list-style: none; padding: 0; margin: 0; }
+.column-dropdown ul.columns-list li.chkbox-select { padding: 5px; transition: background-color .3s ease; }
+.column-dropdown ul.columns-list li.chkbox-select:hover { background-color: #fff; }
+.search-col{ height: 30px; margin-top: 5px; margin-bottom: 10px; }
