@@ -1,0 +1,6 @@
+a.nav-link { cursor: pointer; }
+
+/* Optional: prevent overly prominent scrollbars; browsers handle default well */
+/* Keep parity helpers */
+.nav-width { max-width: 250px !important; }
+.full-width { margin-left: 57px !important; transition: all .15s ease; }

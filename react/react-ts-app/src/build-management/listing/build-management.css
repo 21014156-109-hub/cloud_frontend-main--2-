@@ -1,0 +1,15 @@
+/* Ported from Angular SCSS */
+.dropzone {
+  border: 2px dashed #cbd5e0;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dropzone.drag-over {
+  background-color: #f8f9fa;
+  border-color: #5e72e4;
+  color: #495057;
+}

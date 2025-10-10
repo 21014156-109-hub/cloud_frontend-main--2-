@@ -1,11 +1,30 @@
-export const AuthConfig: any = {
+export interface AuthUserData {
+  id?: number;
+  clientId?: number;
+  roleSlug: 'admin' | 'client' | string;
+  [key: string]: unknown;
+}
+
+export interface AuthPayload {
+  token: string;
+  userData: AuthUserData;
+}
+
+export interface AuthConfigShape {
+  AUTHORIZATION: string;
+  USER_DATA: string; // stringified JSON
+  IS_LOGGEDIN: 'true' | 'false' | string;
+  CLIENT_ID: number;
+}
+
+export const AuthConfig: AuthConfigShape = {
   AUTHORIZATION: '',
   USER_DATA: '',
   IS_LOGGEDIN: 'false',
-  CLIENT_ID: 0
+  CLIENT_ID: 0,
 };
 
-export function setAuthUserData(userData: any): boolean {
+export function setAuthUserData(userData: AuthPayload): boolean {
   AuthConfig.AUTHORIZATION = userData.token;
   AuthConfig.USER_DATA = JSON.stringify(userData.userData);
   AuthConfig.IS_LOGGEDIN = 'true';
@@ -14,9 +33,9 @@ export function setAuthUserData(userData: any): boolean {
   if (userData.userData.roleSlug === 'admin') {
     clientId = 0;
   } else if (userData.userData.roleSlug === 'client') {
-    clientId = userData.userData.id;
+    clientId = (userData.userData.id as number) || 0;
   } else {
-    clientId = userData.userData.clientId;
+    clientId = (userData.userData.clientId as number) || 0;
   }
   AuthConfig.CLIENT_ID = clientId;
   localStorage.setItem('token', userData.token);
@@ -35,6 +54,24 @@ export function unsetAuthUserData(): boolean {
   return true;
 }
 
-export function getAuthUserData() {
-  return AuthConfig.USER_DATA !== '' ? JSON.parse(AuthConfig.USER_DATA) : null;
+export function getAuthUserData(): AuthUserData | null {
+  if (AuthConfig.USER_DATA && AuthConfig.USER_DATA !== '') {
+    try { return JSON.parse(AuthConfig.USER_DATA); } catch { return null; }
+  }
+  // Fallback to localStorage to persist across reloads
+  const stored = localStorage.getItem('userData');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // hydrate AuthConfig for runtime
+      AuthConfig.USER_DATA = stored;
+      AuthConfig.AUTHORIZATION = localStorage.getItem('token') || '';
+      AuthConfig.IS_LOGGEDIN = localStorage.getItem('isLoggedIn') || 'false';
+      AuthConfig.CLIENT_ID = Number(localStorage.getItem('clientId') || 0);
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }

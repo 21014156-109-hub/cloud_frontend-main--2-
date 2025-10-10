@@ -1,0 +1,14 @@
+.btn-type :hover{
+    cursor:pointer;
+}
+
+.chart-btns.nav-link.active{
+    cursor:pointer;
+    background-color:#5e72e4 ;
+}
+
+.filter-drop-down {
+    height: 38px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
