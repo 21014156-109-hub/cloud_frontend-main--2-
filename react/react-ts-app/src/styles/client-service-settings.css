@@ -1,0 +1,22 @@
+/* Client Service Settings page styles */
+.client-select-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.client-search {
+  font-size: 0.875rem;
+  color: #8898aa;
+}
+
+.client-select {
+  font-size: 0.875rem;
+  color: #8898aa;
+}
+
+.available-item:hover,
+.client-select option:hover {
+  background-color: #1967d2;
+  color: #fff;
+}

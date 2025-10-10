@@ -75,3 +75,9 @@ export function getAuthUserData(): AuthUserData | null {
   }
   return null;
 }
+
+export function getClientID(): number {
+  if (AuthConfig.CLIENT_ID && AuthConfig.CLIENT_ID > 0) return AuthConfig.CLIENT_ID;
+  const stored = localStorage.getItem('clientId');
+  return stored ? Number(stored) : 0;
+}
