@@ -8,6 +8,9 @@ import ClientServiceSettings from './client-service-settings/ClientServiceSettin
 import ClientTestSuitListing from './client-test-suit/listing/ClientTestSuitListing';
 import AddClientTestSuit from './client-test-suit/add/AddClientTestSuit';
 import UpdateClientTestSuit from './client-test-suit/update/UpdateClientTestSuit';
+import WifiProfilesListing from './wifi-profiles/listing/WifiProfilesListing';
+import AddWifiProfile from './wifi-profiles/add/AddWifiProfile';
+import UpdateWifiProfile from './wifi-profiles/update/UpdateWifiProfile';
 import Layout from './layout/Layout';
 import CloudDBListing from './cloudDB/listing/CloudDBListing';
 import DeviceResultAnalysis from './cloudDB/analysis/DeviceResultAnalysis';
@@ -37,6 +40,9 @@ export default function App() {
     <Route path="/reporting/monthly-report" element={<AuthGuard><Layout><MonthlyReport /></Layout></AuthGuard>} />
   <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
   <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
+  <Route path="/wifi-profiles/listing" element={<AuthGuard><Layout><WifiProfilesListing /></Layout></AuthGuard>} />
+  <Route path="/wifi-profiles/add" element={<AuthGuard><Layout><AddWifiProfile /></Layout></AuthGuard>} />
+  <Route path="/wifi-profiles/update/:id" element={<AuthGuard><Layout><UpdateWifiProfile /></Layout></AuthGuard>} />
   {/* Direct routes for listings to match Angular-style links */}
   <Route path="/test-suites/listing" element={<AuthGuard><Layout><TestSuitesTab /></Layout></AuthGuard>} />
   <Route path="/test-suites-assignment/listing" element={<AuthGuard><Layout><AssignTestSuitesTab /></Layout></AuthGuard>} />
