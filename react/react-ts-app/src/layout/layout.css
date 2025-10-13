@@ -105,3 +105,13 @@ nav.sidenav.nav-width + .main-content,
 .sidenav .navbar-heading {
   display: block !important;
 }
+
+/* Footer readability: make text and link light black */
+.footer .copyright,
+.footer .copyright a {
+  color: #333 !important; /* light black */
+}
+.footer .copyright a:hover {
+  color: #111 !important;
+  text-decoration: none;
+}
