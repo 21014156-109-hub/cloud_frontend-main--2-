@@ -24,6 +24,12 @@ import MonthlyReport from './reporting/monthly-report/MonthlyReport';
 import AddTestSuitesAssignment from './configuration-package/assign-test-suites-tab/AddTestSuitesAssignment';
 import './App.css';
 import LogoSetting from './logo-setting/LogoSetting';
+import RequestListing from './licenses/RequestListing';
+import AddRequest from './licenses/AddRequest';
+import AdminRequest from './licenses/AdminRequest';
+import ViewRequest from './licenses/ViewRequest';
+import Management from './licenses/Management';
+import ClientInfo from './licenses/ClientInfo';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -44,6 +50,12 @@ export default function App() {
     <Route path="/reporting/monthly-report" element={<AuthGuard><Layout><MonthlyReport /></Layout></AuthGuard>} />
   <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
   <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
+  <Route path="/licenses/request" element={<AuthGuard><Layout><RequestListing /></Layout></AuthGuard>} />
+  <Route path="/licenses/add-request" element={<AuthGuard><Layout><AddRequest /></Layout></AuthGuard>} />
+  <Route path="/licenses/admin-request" element={<AuthGuard><AdminGuard><Layout><AdminRequest /></Layout></AdminGuard></AuthGuard>} />
+  <Route path="/licenses/view-request/:id" element={<AuthGuard><Layout><ViewRequest /></Layout></AuthGuard>} />
+  <Route path="/licenses/management" element={<AuthGuard><Layout><Management /></Layout></AuthGuard>} />
+  <Route path="/licenses/client-info" element={<AuthGuard><Layout><ClientInfo /></Layout></AuthGuard>} />
   <Route path="/wifi-profiles/listing" element={<AuthGuard><Layout><WifiProfilesListing /></Layout></AuthGuard>} />
   <Route path="/wifi-profiles/add" element={<AuthGuard><Layout><AddWifiProfile /></Layout></AuthGuard>} />
   <Route path="/wifi-profiles/update/:id" element={<AuthGuard><Layout><UpdateWifiProfile /></Layout></AuthGuard>} />

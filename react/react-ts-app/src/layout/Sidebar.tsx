@@ -50,15 +50,6 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
   const [activePath, setActivePath] = useState(location.pathname);
   useEffect(() => { setActivePath(location.pathname); }, [location.pathname]);
 
-  // Recursively determine if a menu item (or any of its children) matches the current path
-  function isItemActive(item: MenuItem): boolean {
-    if (item.route && item.route === activePath) return true;
-    if (item.children) {
-      return item.children.some((c) => isItemActive(c));
-    }
-    return false;
-  }
-
   // Track open/closed state for collapsible menu items in React state.
   // Keys are generated from the item index (and child index for nested items) so
   // they remain stable across renders.
@@ -110,15 +101,15 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
               {menuItems.filter(mi => !mi.isHidden).map((item, idx) => {
                 const pKey = `p-${idx}`;
                 return (
-                <li key={idx} className={`nav-item ${isItemActive(item) ? 'active' : ''}`}>
+                <li key={idx} className={`nav-item ${item.route === activePath ? 'active' : ''}`}>
                   {!item.children ? (
-                    <Link to={item.route} className={`nav-link ${isItemActive(item) ? 'active' : ''}`}>
+                    <Link to={item.route} className={`nav-link ${item.route === activePath ? 'active' : ''}`}>
                       <i className={item.iconClass} />
                       <span className="nav-link-text">{item.title}</span>
                     </Link>
                   ) : (
                     <a
-                      className={`nav-link ${isItemActive(item) ? 'active' : ''}`}
+                      className={`nav-link ${item.route === activePath ? 'active' : ''}`}
                       aria-expanded={!!openKeys[pKey]}
                       onClick={() => toggleOpen(pKey)}
                       role="button"
@@ -134,12 +125,12 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
                         {item.children.filter(c => !c.isHidden).map((child, cidx) => {
                           const childKey = `p-${idx}-c-${cidx}`;
                           return (
-                          <li key={cidx} className={`nav-item ${isItemActive(child) ? 'active' : ''}`}>
+                          <li key={cidx} className={`nav-item ${child.route === activePath ? 'active' : ''}`}>
                             {!child.children ? (
-                              <Link to={child.route} className={`nav-link ${isItemActive(child) ? 'active' : ''}`}>{child.title}</Link>
+                              <Link to={child.route} className={`nav-link ${child.route === activePath ? 'active' : ''}`}>{child.title}</Link>
                             ) : (
                               <a
-                                className={`nav-link ${isItemActive(child) ? 'active' : ''}`}
+                                className={`nav-link ${child.route === activePath ? 'active' : ''}`}
                                 aria-expanded={!!openKeys[childKey]}
                                 onClick={() => toggleOpen(childKey)}
                                 role="button"
@@ -151,8 +142,8 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
                               <div className={`collapse ${openKeys[childKey] ? 'show' : ''}`}>
                                 <ul className="nav nav-sm flex-column">
                                   {child.children.filter(sc => !sc.isHidden).map((subChild, sidx) => (
-                                    <li key={sidx} className={`nav-item ${isItemActive(subChild) ? 'active' : ''}`}>
-                                      <Link to={subChild.route} className={`nav-link ${isItemActive(subChild) ? 'active' : ''}`}>{subChild.title}</Link>
+                                    <li key={sidx} className={`nav-item ${subChild.route === activePath ? 'active' : ''}`}>
+                                      <Link to={subChild.route} className={`nav-link ${subChild.route === activePath ? 'active' : ''}`}>{subChild.title}</Link>
                                     </li>
                                   ))}
                                 </ul>
