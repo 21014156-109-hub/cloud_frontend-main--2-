@@ -12,6 +12,8 @@ import Layout from './layout/Layout';
 import CloudDBListing from './cloudDB/listing/CloudDBListing';
 import DeviceResultAnalysis from './cloudDB/analysis/DeviceResultAnalysis';
 import ConfigurationPackage from './configuration-package/ConfigurationPackage';
+import TestSuitesTab from './configuration-package/test-suites-tab/TestSuitesTab';
+import AssignTestSuitesTab from './configuration-package/assign-test-suites-tab/AssignTestSuitesTab';
 import MonthlyReport from './reporting/monthly-report/MonthlyReport';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
@@ -32,8 +34,14 @@ export default function App() {
     <Route path="/cloudDB/listing" element={<AuthGuard><Layout><CloudDBListing /></Layout></AuthGuard>} />
   <Route path="/devices/listing" element={<AuthGuard><Layout><CloudDBListing /></Layout></AuthGuard>} />
     <Route path="/reporting/monthly-report" element={<AuthGuard><Layout><MonthlyReport /></Layout></AuthGuard>} />
-    <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
-    <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
+  <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
+  <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
+  {/* Direct routes for listings to match Angular-style links */}
+  <Route path="/test-suites/listing" element={<AuthGuard><Layout><TestSuitesTab /></Layout></AuthGuard>} />
+  <Route path="/test-suites-assignment/listing" element={<AuthGuard><Layout><AssignTestSuitesTab /></Layout></AuthGuard>} />
+  {/* Alias Angular-style assignment routes to React pages */}
+  <Route path="/test-suites-assignment/add" element={<AuthGuard><Layout><AddClientTestSuit /></Layout></AuthGuard>} />
+  <Route path="/test-suites-assignment/update/:id" element={<AuthGuard><Layout><UpdateClientTestSuit /></Layout></AuthGuard>} />
         <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>

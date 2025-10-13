@@ -1,5 +1,15 @@
-export interface TestSuiteSummary { id: number; testSuitName?: string; name?: string; displayName?: string }
-export interface ApiResponse<T = unknown> { status: boolean; data: T }
+export interface TestSuiteSummary {
+  id: number;
+  testSuitName?: string;
+  name?: string;
+  displayName?: string;
+  description?: string;
+  testPlan?: unknown[];
+  tests?: unknown[];
+  createdAt?: string;
+}
+export interface ApiResponse<T = unknown> { status: boolean; data: T; message?: string }
+export interface PaginatedResponse<T> { totalItems: number; totalPages: number; data: T }
 
 export class TestSuitesService {
   private base = (import.meta.env.VITE_BASE_URL || 'http://127.0.0.1:3000/v1/') as string;
@@ -10,8 +20,13 @@ export class TestSuitesService {
     return resp.json();
   }
 
-  async getTestSuites(page: number, size: number): Promise<ApiResponse<TestSuiteSummary[]>> {
+  async getTestSuites(page: number, size: number): Promise<ApiResponse<PaginatedResponse<TestSuiteSummary[]>>> {
     const resp = await fetch(`${this.base}test-suits/listing?page=${page}&size=${size}`, { headers: this.headers() });
+    return resp.json();
+  }
+
+  async deleteTestSuite(id: number): Promise<ApiResponse<unknown>> {
+    const resp = await fetch(`${this.base}test-suits/${id}`, { method: 'DELETE', headers: this.headers() });
     return resp.json();
   }
 }
