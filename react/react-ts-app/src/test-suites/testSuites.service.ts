@@ -11,22 +11,18 @@ export interface TestSuiteSummary {
 export interface ApiResponse<T = unknown> { status: boolean; data: T; message?: string }
 export interface PaginatedResponse<T> { totalItems: number; totalPages: number; data: T }
 
-export class TestSuitesService {
-  private base = (import.meta.env.VITE_BASE_URL || 'http://127.0.0.1:3000/v1/') as string;
-  private headers() { return { token: window.localStorage.getItem('token') || '' } }
+import http from '../services/http';
 
+export class TestSuitesService {
   async getAllTestSuites(): Promise<ApiResponse<TestSuiteSummary[]>> {
-    const resp = await fetch(`${this.base}test-suits/all`, { headers: this.headers() });
-    return resp.json();
+    return http('test-suits/all');
   }
 
   async getTestSuites(page: number, size: number): Promise<ApiResponse<PaginatedResponse<TestSuiteSummary[]>>> {
-    const resp = await fetch(`${this.base}test-suits/listing?page=${page}&size=${size}`, { headers: this.headers() });
-    return resp.json();
+    return http(`test-suits/listing?page=${page}&size=${size}`);
   }
 
   async deleteTestSuite(id: number): Promise<ApiResponse<unknown>> {
-    const resp = await fetch(`${this.base}test-suits/${id}`, { method: 'DELETE', headers: this.headers() });
-    return resp.json();
+    return http(`test-suits/${id}`, { method: 'DELETE' });
   }
 }

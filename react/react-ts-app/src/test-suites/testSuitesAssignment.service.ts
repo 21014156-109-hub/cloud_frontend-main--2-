@@ -1,22 +1,17 @@
+import http from '../services/http';
+
 export interface ApiResponse<T = unknown> { status: boolean; data: T; message?: string }
 
 export class TestSuitesAssignmentService {
-  private base = (import.meta.env.VITE_BASE_URL || 'http://127.0.0.1:3000/v1/') as string;
-  private headers() { return { token: window.localStorage.getItem('token') || '' } }
-
   async getTestSuiteAssignmentListing(page: number, size: number): Promise<ApiResponse<Record<string, unknown>>> {
-    const res = await fetch(`${this.base}test-suits-assignments/listing?page=${page}&size=${size}`, { headers: this.headers() });
-    return res.json();
+    return http(`test-suits-assignments/listing?page=${page}&size=${size}`);
   }
 
   async deleteAssignment(id: number): Promise<ApiResponse<Record<string, unknown>>> {
-    const res = await fetch(`${this.base}test-suits-assignments/${id}`, { method: 'DELETE', headers: this.headers() });
-    return res.json();
+    return http(`test-suits-assignments/${id}`, { method: 'DELETE' });
   }
 
   async assignTestSuites(data: { testerId: number; clientTestSuitId: number }): Promise<ApiResponse<Record<string, unknown>>> {
-    const headers = { ...this.headers(), 'Content-Type': 'application/json' } as Record<string, string>;
-    const res = await fetch(`${this.base}test-suits-assignments/assign`, { method: 'POST', headers, body: JSON.stringify(data) });
-    return res.json();
+    return http('test-suits-assignments/assign', { method: 'POST', json: data });
   }
 }

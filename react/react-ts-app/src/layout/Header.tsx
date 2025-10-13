@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Breadcrumbs } from '../components';
 import { getAuthUserData, unsetAuthUserData } from '../utils/helper';
 
-export default function Header({ breadcrumb = [] as { name: string; link?: string }[], onToggle }: { breadcrumb?: { name: string; link?: string }[]; onToggle?: () => void }) {
+export default function Header({ onToggle }: { onToggle?: () => void }) {
   const user = useMemo(() => getAuthUserData(), []);
   function toggleSidebarFromHeader() {
     onToggle?.();
@@ -15,7 +15,7 @@ export default function Header({ breadcrumb = [] as { name: string; link?: strin
           <button className="btn btn-link text-white p-0 mr-3 d-md-none" onClick={toggleSidebarFromHeader} aria-label="Toggle sidebar">
             <i className="ni ni-bullet-list-67" style={{ fontSize: '1.25rem' }} />
           </button>
-          <Breadcrumbs breadcrumb={breadcrumb} />
+          <Breadcrumbs />
           <ul className="navbar-nav align-items-center d-none d-md-flex ml-auto">
             <li className="nav-item dropdown">
               <a className="nav-link pr-0 dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">

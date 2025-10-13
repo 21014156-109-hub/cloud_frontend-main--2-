@@ -16,7 +16,6 @@ export default function AddTestSuitesAssignment({ onClose, onSuccess }: { onClos
   const auth = useMemo(() => getAuthUserData(), []);
 
   const [testers, setTesters] = useState<Tester[]>([]);
-  const [testerSearch, setTesterSearch] = useState('');
   const [selectedTesterId, setSelectedTesterId] = useState<number | ''>('');
 
   const [clientSuites, setClientSuites] = useState<ClientTestSuitItem[]>([]);
@@ -98,9 +97,6 @@ export default function AddTestSuitesAssignment({ onClose, onSuccess }: { onClos
               <div className="row">
                 <div className="col-md-6">
                   <label className="form-control-label">Select Tester <span className="text-danger">*</span></label>
-                  <input className="form-control mb-2" placeholder="Search" value={testerSearch} onChange={(e) => {
-                    const term = e.target.value; setTesterSearch(term); if (term.length >= 2 || term.length === 0) void loadTesters(term);
-                  }} />
                   <select className="form-control" value={selectedTesterId} onChange={(e) => setSelectedTesterId(e.target.value ? Number(e.target.value) : '')}>
                     <option value="">Select</option>
                     {testers.map((t) => (

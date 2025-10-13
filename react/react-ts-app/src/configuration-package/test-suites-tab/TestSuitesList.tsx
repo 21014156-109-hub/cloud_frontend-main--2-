@@ -3,24 +3,32 @@ import { TestSuitesService } from '../../test-suites/testSuites.service';
 import type { ApiResponse, TestSuiteSummary, PaginatedResponse } from '../../test-suites/testSuites.service';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import PaginationLinks from '../../shared-components/PaginationLinks';
+import { getAuthUserData } from '../../utils/helper';
 
 const svc = new TestSuitesService();
 
 export default function TestSuitesList() {
   const [records, setRecords] = useState<TestSuiteSummary[]>([]);
+  const [allRecords, setAllRecords] = useState<TestSuiteSummary[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   // totalRecords available if needed later
-  // const [totalRecords, setTotalRecords] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState('');
+  const isAdmin = (getAuthUserData()?.roleSlug === 'admin');
 
   const fetchData = useCallback(async (p: number) => {
     try {
       const resp = await svc.getTestSuites(p - 1, pageSize) as ApiResponse<PaginatedResponse<TestSuiteSummary[]>>;
       if (resp.status) {
         const payload = resp.data;
-  setRecords(payload.data ?? []);
+        const rows = (payload.data ?? []) as TestSuiteSummary[];
+        setRecords(rows);
+        setAllRecords(rows);
         setTotalPages(payload.totalPages ?? 0);
+        setTotalRecords(payload.totalItems ?? rows.length);
       }
     } catch {
       toast.error('Failed to load test suites');
@@ -30,11 +38,33 @@ export default function TestSuitesList() {
   useEffect(() => { void fetchData(page); }, [page, fetchData]);
 
   async function remove(id: number) {
+    if (!isAdmin) { toast.error('Only administrators can delete test suites'); return; }
+    if (!window.confirm('Are you sure? You want to delete!')) return;
     try {
       const res = await svc.deleteTestSuite(id) as ApiResponse<unknown>;
       if (res.status) { toast.success('Deleted'); await fetchData(1); }
       else toast.error(res.message || 'Failed to delete');
     } catch { toast.error('Failed to delete'); }
+  }
+
+  function testsCount(r: TestSuiteSummary): number {
+    if (r.testPlan) {
+      if (Array.isArray(r.testPlan)) return r.testPlan.length;
+      if (typeof r.testPlan === 'string') {
+        try { const parsed = JSON.parse(r.testPlan as unknown as string); return Array.isArray(parsed) ? parsed.length : 0; } catch { return 0; }
+      }
+    }
+    return Array.isArray(r.tests) ? r.tests.length : 0;
+  }
+
+  function filterData(term: string) {
+    setSearch(term);
+    const cols: (keyof TestSuiteSummary)[] = ['testSuitName', 'description'];
+    const filtered = allRecords.filter((row) => {
+      const rec = row as unknown as Record<string, unknown>;
+      return cols.some((c) => String(rec[c as string] || '').toLowerCase().includes(term.toLowerCase()));
+    });
+    setRecords(filtered);
   }
 
   return (
@@ -45,7 +75,7 @@ export default function TestSuitesList() {
             <Link className="btn btn-dark-custom btn-padding" to="/test-suites/add-test-suite">+ Add Test Suite</Link>
           </div>
           <div className="col-sm-6 text-right">
-            <input className="form-control" placeholder="Search" style={{ width: 200 }} />
+            <input className="form-control" placeholder="Search" style={{ width: 200 }} value={search} onChange={(e) => filterData(e.target.value)} />
           </div>
         </div>
       </div>
@@ -60,8 +90,8 @@ export default function TestSuitesList() {
                 <td>{((page - 1) * pageSize) + i + 1}</td>
                 <td>{r.testSuitName}</td>
                 <td>{r.description}</td>
-                <td>{Array.isArray(r.testPlan) ? r.testPlan.length : (Array.isArray(r.tests) ? r.tests.length : 0)}</td>
-                <td>{r.createdAt ?? ''}</td>
+                <td>{testsCount(r)}</td>
+                <td>{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</td>
                 <td>
                   <Link className="text-black-50" to={`/test-suites/update-test-suite/${r.id}`}>Edit</Link>
                   <span> | </span>
@@ -72,21 +102,14 @@ export default function TestSuitesList() {
           </tbody>
         </table>
         {records.length > 0 && (
-          <div className="d-flex justify-content-between align-items-center mt-3">
-            <div>
-              <label className="mr-2">Page size</label>
-              <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); void fetchData(1); }}>
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-              </select>
-            </div>
-            <div>
-              <button className="btn btn-sm btn-light mr-2" disabled={page <= 1} onClick={() => { setPage((p) => p - 1); void fetchData(page - 1); }}>Prev</button>
-              <span>Page {page} of {Math.max(totalPages, 1)}</span>
-              <button className="btn btn-sm btn-light ml-2" disabled={page >= totalPages} onClick={() => { setPage((p) => p + 1); void fetchData(page + 1); }}>Next</button>
-            </div>
-          </div>
+          <PaginationLinks
+            totalRecords={totalRecords}
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            onPageChange={(p) => { setPage(p); void fetchData(p); }}
+            onPageSizeChange={(s) => { setPageSize(s); void fetchData(1); }}
+          />
         )}
       </div>
     </div>

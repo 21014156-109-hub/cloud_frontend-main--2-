@@ -46,12 +46,22 @@ export default function AssignTestSuitesList() {
     }
   }
 
+  // When adding, show only the assignment form (hide list, search, and table)
+  if (showAdd) {
+    return (
+      <div className="card-body">
+        <AddTestSuitesAssignment onClose={() => setShowAdd(false)} onSuccess={() => { setShowAdd(false); void fetchData(1); }} />
+      </div>
+    );
+  }
+
+  // Default: listing view with Add button and search
   return (
     <div>
       <div className="card-header">
         <div className="row">
           <div className="col-sm-6">
-            <button className="btn btn-dark-custom btn-padding" onClick={() => setShowAdd(true)}>+ Assign Test Suite</button>
+            <button className="btn btn-dark-custom btn-padding" onClick={() => setShowAdd(true)}>+ Add Test Suite</button>
           </div>
           <div className="col-sm-6 text-right">
             <input className="form-control" placeholder="Search" style={{ width: 200 }} />
@@ -59,11 +69,6 @@ export default function AssignTestSuitesList() {
         </div>
       </div>
       <div className="card-body">
-        {showAdd && (
-          <div className="mb-4">
-            <AddTestSuitesAssignment onClose={() => setShowAdd(false)} onSuccess={() => { setShowAdd(false); void fetchData(1); }} />
-          </div>
-        )}
         <table className="table">
           <thead>
             <tr><th>Sr No.</th><th>Tester Name</th><th>Test Suite Name</th><th>Action</th></tr>

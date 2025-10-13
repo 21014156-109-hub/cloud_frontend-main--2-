@@ -78,7 +78,7 @@ export default function ConfigurationPackage() {
   }, []);
 
   return (
-    <div className="container-fluid pt-8">
+    <div className="container-fluid pt-3">
       <div className="card shadow">
         <div className="card-header">
           <ul className="nav nav-tabs">
