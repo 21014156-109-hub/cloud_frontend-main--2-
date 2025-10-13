@@ -50,8 +50,27 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
   const [activePath, setActivePath] = useState(location.pathname);
   useEffect(() => { setActivePath(location.pathname); }, [location.pathname]);
 
-  function collapseToggle(item: MenuItem) {
-    item.isCollapsed = !item.isCollapsed;
+  // Track open/closed state for collapsible menu items in React state.
+  // Keys are generated from the item index (and child index for nested items) so
+  // they remain stable across renders.
+  const [openKeys, setOpenKeys] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    menuItems.forEach((mi, i) => {
+      const key = `p-${i}`;
+      // open when isCollapsed is explicitly false
+      initial[key] = !mi.isCollapsed;
+      if (mi.children) {
+        mi.children.forEach((c, j) => {
+          const childKey = `p-${i}-c-${j}`;
+          initial[childKey] = !c.isCollapsed;
+        });
+      }
+    });
+    return initial;
+  });
+
+  function toggleOpen(key: string) {
+    setOpenKeys(prev => ({ ...prev, [key]: !prev[key] }));
   }
 
   function toggleSidebar() {
@@ -79,7 +98,9 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
         <div className="navbar-inner">
           <div className="collapse navbar-collapse" id="sidenav-collapse-main">
             <ul className="navbar-nav">
-              {menuItems.filter(mi => !mi.isHidden).map((item, idx) => (
+              {menuItems.filter(mi => !mi.isHidden).map((item, idx) => {
+                const pKey = `p-${idx}`;
+                return (
                 <li key={idx} className={`nav-item ${item.route === activePath ? 'active' : ''}`}>
                   {!item.children ? (
                     <Link to={item.route} className={`nav-link ${item.route === activePath ? 'active' : ''}`}>
@@ -87,25 +108,37 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
                       <span className="nav-link-text">{item.title}</span>
                     </Link>
                   ) : (
-                    <a className={`nav-link ${item.route === activePath ? 'active' : ''}`} aria-expanded={!item.isCollapsed} onClick={() => collapseToggle(item)}>
+                    <a
+                      className={`nav-link ${item.route === activePath ? 'active' : ''}`}
+                      aria-expanded={!!openKeys[pKey]}
+                      onClick={() => toggleOpen(pKey)}
+                      role="button"
+                    >
                       <i className={item.iconClass} />
                       <span className="nav-link-text">{item.title}</span>
                     </a>
                   )}
                   {item.children && (
-                    <div className={`collapse ${item.isCollapsed ? '' : 'show'}`}>
+                    <div className={`collapse ${openKeys[pKey] ? 'show' : ''}`}>
                       <ul className="nav nav-sm flex-column">
-                        {item.children.filter(c => !c.isHidden).map((child, cidx) => (
+                        {item.children.filter(c => !c.isHidden).map((child, cidx) => {
+                          const childKey = `p-${idx}-c-${cidx}`;
+                          return (
                           <li key={cidx} className={`nav-item ${child.route === activePath ? 'active' : ''}`}>
                             {!child.children ? (
                               <Link to={child.route} className={`nav-link ${child.route === activePath ? 'active' : ''}`}>{child.title}</Link>
                             ) : (
-                              <a className={`nav-link ${child.route === activePath ? 'active' : ''}`} aria-expanded={!child.isCollapsed} onClick={() => collapseToggle(child)}>
+                              <a
+                                className={`nav-link ${child.route === activePath ? 'active' : ''}`}
+                                aria-expanded={!!openKeys[childKey]}
+                                onClick={() => toggleOpen(childKey)}
+                                role="button"
+                              >
                                 <span className="nav-link-text">{child.title}</span>
                               </a>
                             )}
                             {child.children && (
-                              <div className={`collapse ${child.isCollapsed ? '' : 'show'}`}>
+                              <div className={`collapse ${openKeys[childKey] ? 'show' : ''}`}>
                                 <ul className="nav nav-sm flex-column">
                                   {child.children.filter(sc => !sc.isHidden).map((subChild, sidx) => (
                                     <li key={sidx} className={`nav-item ${subChild.route === activePath ? 'active' : ''}`}>
@@ -116,12 +149,12 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
                               </div>
                             )}
                           </li>
-                        ))}
+                        )})}
                       </ul>
                     </div>
                   )}
                 </li>
-              ))}
+              )})}
               <li className="nav-item">
                 <a className="nav-link">
                   <i className="ni ni-laptop text-primary" />
