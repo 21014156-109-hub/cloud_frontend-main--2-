@@ -12,6 +12,7 @@ import Layout from './layout/Layout';
 import CloudDBListing from './cloudDB/listing/CloudDBListing';
 import DeviceResultAnalysis from './cloudDB/analysis/DeviceResultAnalysis';
 import ConfigurationPackage from './configuration-package/ConfigurationPackage';
+import MonthlyReport from './reporting/monthly-report/MonthlyReport';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,6 +30,8 @@ export default function App() {
   <Route path="/client-test-suit/add" element={<AuthGuard><AdminGuard><Layout><AddClientTestSuit /></Layout></AdminGuard></AuthGuard>} />
   <Route path="/client-test-suit/update/:id" element={<AuthGuard><Layout><UpdateClientTestSuit /></Layout></AuthGuard>} />
     <Route path="/cloudDB/listing" element={<AuthGuard><Layout><CloudDBListing /></Layout></AuthGuard>} />
+  <Route path="/devices/listing" element={<AuthGuard><Layout><CloudDBListing /></Layout></AuthGuard>} />
+    <Route path="/reporting/monthly-report" element={<AuthGuard><Layout><MonthlyReport /></Layout></AuthGuard>} />
     <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
     <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
         <Route path="*" element={<Login />} />

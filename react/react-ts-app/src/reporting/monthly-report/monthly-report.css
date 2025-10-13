@@ -1,0 +1,7 @@
+.wrapperDiv { position: relative; }
+.top-scrollbar { height: 16px; overflow-x: auto; overflow-y: hidden; }
+.top-scrollbar > div { height: 1px; }
+.column-selector { position: relative; display: inline-block; }
+.column-dropdown { display: none; position: absolute; background: #fff; border: 1px solid #ddd; padding: 8px; z-index: 30; }
+.column-selector:hover .column-dropdown { display: block; }
+.btn-dark-custom { background-color: #343a40; color: #fff; border: none; }

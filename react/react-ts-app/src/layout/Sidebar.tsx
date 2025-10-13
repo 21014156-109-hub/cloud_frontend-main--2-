@@ -24,7 +24,7 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
     { title: 'Dashboard', route: '/dashboard', isCollapsed: false, isHidden: false, iconClass: 'ni ni-shop text-primary' },
     { title: 'Device Processing', route: '', isCollapsed: true, isHidden: false, iconClass: 'ni ni-collection text-info', children: [
       { title: 'Device Records', route: '/devices/listing', isCollapsed: false, isHidden: false, iconClass: '' },
-      { title: 'Testers Report', route: '/reporting/monthly-report', isCollapsed: false, isHidden: false, iconClass: '' },
+      { title: 'Tester Reports', route: '/reporting/monthly-report', isCollapsed: false, isHidden: false, iconClass: '' },
     ]},
     { title: 'Configuration Packages', route: '/configuration-package', isCollapsed: false, isHidden: !isHiddenForAdmin, iconClass: 'ni ni-ui-04 text-orange' },
     { title: 'Organization Settings', route: '', isCollapsed: true, isHidden: false, iconClass: 'ni ni-settings text-info', children: [
@@ -116,6 +116,7 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
                     >
                       <i className={item.iconClass} />
                       <span className="nav-link-text">{item.title}</span>
+                      <span className={`caret ${openKeys[pKey] ? 'rotated' : ''}`} style={{ marginLeft: 'auto' }}>▸</span>
                     </a>
                   )}
                   {item.children && (
