@@ -30,6 +30,9 @@ import AdminRequest from './licenses/AdminRequest';
 import ViewRequest from './licenses/ViewRequest';
 import Management from './licenses/Management';
 import ClientInfo from './licenses/ClientInfo';
+import LicensesListing from './licenses/listing/LicensesListing';
+import AddLicenseRequest from './licenses/add/AddLicenseRequest';
+import UpdateLicenseRequest from './licenses/update/UpdateLicenseRequest';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -50,6 +53,9 @@ export default function App() {
     <Route path="/reporting/monthly-report" element={<AuthGuard><Layout><MonthlyReport /></Layout></AuthGuard>} />
   <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
   <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
+  <Route path="/licenses/listing" element={<AuthGuard><Layout><LicensesListing /></Layout></AuthGuard>} />
+  <Route path="/licenses/add" element={<AuthGuard><Layout><AddLicenseRequest /></Layout></AuthGuard>} />
+  <Route path="/licenses/update/:id" element={<AuthGuard><Layout><UpdateLicenseRequest /></Layout></AuthGuard>} />
   <Route path="/licenses/request" element={<AuthGuard><Layout><RequestListing /></Layout></AuthGuard>} />
   <Route path="/licenses/add-request" element={<AuthGuard><Layout><AddRequest /></Layout></AuthGuard>} />
   <Route path="/licenses/admin-request" element={<AuthGuard><AdminGuard><Layout><AdminRequest /></Layout></AdminGuard></AuthGuard>} />

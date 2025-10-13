@@ -22,6 +22,9 @@ function mainSectionTitle(pathname: string): string {
   // User Management cluster
   if (p.startsWith('/users') || p.startsWith('/warehouse') || p.startsWith('/testers') || p.startsWith('/stations')) return 'User Management';
 
+  // Licenses pages are part of user/admin management in the app
+  if (p.startsWith('/licenses')) return 'User Management';
+
   // General Settings
   if (p.startsWith('/device-catalogue')) return 'General Settings';
 
