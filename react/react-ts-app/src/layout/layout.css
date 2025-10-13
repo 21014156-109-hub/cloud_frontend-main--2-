@@ -5,7 +5,7 @@
   /* Make the collapsed width match Argon defaults and increase expanded width */
   --sidebar-collapsed: 62px; /* smaller collapsed width so icons-only fits */
   --sidebar-expanded: 250px; /* increased expanded width */
-  --header-height: 50px;
+  --header-height: 75px; /* increased header height for more vertical space */
 }
 
 /* Reset */
