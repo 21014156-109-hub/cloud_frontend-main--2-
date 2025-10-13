@@ -12,11 +12,12 @@ type MenuItem = {
   isHidden: boolean;
 };
 
-export default function Sidebar({ onToggle }: { onToggle?: (open: boolean) => void }) {
+export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onToggle?: (open: boolean) => void }) {
   const userData = getAuthUserData();
   const isAdmin = userData ? userData.roleSlug === 'admin' : false;
   const isHiddenForAdmin = !isAdmin;
-  const [toggleSideBar, setToggleSideBar] = useState(false);
+  // If parent doesn't control, default to false
+  const isPinned = !!pinned;
   const location = useLocation();
 
   const menuItems: MenuItem[] = useMemo(() => ([
@@ -54,20 +55,19 @@ export default function Sidebar({ onToggle }: { onToggle?: (open: boolean) => vo
   }
 
   function toggleSidebar() {
-    const next = !toggleSideBar;
-    setToggleSideBar(next);
+    const next = !isPinned;
     onToggle?.(next);
   }
 
   return (
-    <nav className={`sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white ${!toggleSideBar ? 'nav-width' : ''}`} id="sidenav-main">
+  <nav className={`sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white ${isPinned ? 'nav-width' : ''}`} id="sidenav-main">
       <div className="scrollbar-inner">
         <div className="sidenav-header d-flex align-items-center">
           <Link className="navbar-brand" to="/dashboard">
             <img src="/assets/img/brand/logo.png" style={{ maxHeight: '3.5rem' }} className="navbar-brand-img" alt="logo" />
           </Link>
           <div className="ml-auto">
-            <div className={`sidenav-toggler d-none d-xl-block ${!toggleSideBar ? 'active' : ''}`} onClick={toggleSidebar}>
+            <div className={`sidenav-toggler d-none d-xl-block ${isPinned ? 'active' : ''}`} onClick={toggleSidebar}>
               <div className="sidenav-toggler-inner">
                 <i className="sidenav-toggler-line" />
                 <i className="sidenav-toggler-line" />

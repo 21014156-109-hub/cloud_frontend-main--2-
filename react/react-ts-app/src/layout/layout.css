@@ -1,130 +1,94 @@
-a.nav-link { cursor: pointer; }
 
-/* Optional: prevent overly prominent scrollbars; browsers handle default well */
-/* Keep parity helpers */
-.nav-width { max-width: 250px !important; }
-/* When sidebar is toggled (compact), reduce main-content offset */
-.full-width { margin-left: 72px !important; width: calc(100% - 72px) !important; transition: all .15s ease; }
+*/
 
-/* Make the app take the full viewport and remove any page-level gutters */
+/* Helper variables */
+:root {
+  --sidebar-collapsed: 72px;
+  --sidebar-expanded: 200px;
+  --header-height: 50px;
+}
+
+/* Reset */
 html, body, #root {
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  overflow: hidden; /* prevent body scroll - page scrolls inside .main-content */
+  box-sizing: border-box;
 }
 *, *::before, *::after { box-sizing: inherit; }
 
-/* Ensure the main content area handles vertical scrolling internally.
-   Make it flow-based (relative) so the sidenav can push it using margin-left.
-   Sticky header behavior is preserved because the header is inside the
-   same scrolling ancestor. */
-.main-content {
-	position: relative;
-	margin: 0;
-	padding: 0; /* internal content uses .container-fluid for spacing */
-	min-height: 100vh;
-	width: 100%;
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
-	transition: margin-left 240ms ease, width 240ms ease, padding 240ms ease;
+/* Scrollbar styling (kept from Angular scss) */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 6px; }
+
+/* Sidebar base */
+nav.sidenav, .sidenav {
+  background: #fff;
+  box-shadow: none;
+  border-right: 0;
+  z-index: 40;
 }
 
-/* Use margin-left to push content when Argon/JS toggles body classes */
-.g-sidenav-pinned .main-content {
-	margin-left: 250px !important;
-	width: calc(100% - 250px) !important;
-}
-
-.g-sidenav-show .main-content {
-	margin-left: 72px !important;
-	width: calc(100% - 72px) !important;
-}
-
-/* Desktop: make the sidenav part of the normal flow so it pushes content.
-   Keep this limited to desktop sizes to avoid narrow-screen overflow. */
+/* Desktop: fixed left sidebar */
 @media (min-width: 992px) {
-	.sidenav {
-		position: relative;
-		transform: none !important;
-		left: auto !important;
-		top: auto !important;
-		bottom: auto !important;
-		float: left;
-		height: 100vh;
-		z-index: 40; /* below navbar (z-index:50) */
-	}
-
-	.sidenav.nav-width { width: 250px !important; }
-	.g-sidenav-pinned .sidenav { width: 250px !important; }
-	.g-sidenav-show .sidenav { width: 72px !important; }
+  nav.sidenav, .sidenav {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-collapsed);
+    transition: width 200ms ease;
+    overflow-y: auto;
+    /* keep sidebar below header and content so it pushes the layout */
+    z-index: 30;
+  }
+  /* expanded state when .nav-width class is present (same as Angular) */
+  nav.sidenav.nav-width, .sidenav.nav-width { width: var(--sidebar-expanded) !important; }
 }
 
-/* Keep header sticky at top */
-.navbar-top { position: sticky; top: 0; z-index: 50; margin-top: 0; width: 100%; left: 0; }
-/* Remove default navbar horizontal padding to eliminate side gutters */
-.navbar.navbar-top { padding-left: 0 !important; padding-right: 0 !important; }
-
-/* Dark/navy header used in Angular app */
-.bg-dark-custom {
-  background-color: #273245; /* navy-ish */
-  color: #ffffff;
+/* Small screens: keep sidebar inline (no overlay) */
+@media (max-width: 991px) {
+  nav.sidenav, .sidenav { position: relative !important; width: var(--sidebar-collapsed); }
 }
 
-.bg-dark-custom .breadcrumb a,
-.bg-dark-custom .breadcrumb span,
-.bg-dark-custom .navbar-nav .nav-link,
-.bg-dark-custom .navbar-nav .media-body .text-sm {
-  color: rgba(255,255,255,0.9) !important;
+/* Main content: positioned to the right of the fixed sidebar and is the
+   only scrolling container on the page. This reproduces Angular behavior. */
+/* Main content: positioned to the right of the fixed sidebar and is the
+   only scrolling container on the page. Default offset equals collapsed sidebar. */
+.main-content {
+  position: absolute;
+  /* left: var(--sidebar-collapsed);  */
+	left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  transition: left 200ms ease;
+  background: #f6f7f9;
 }
 
-/* Make header taller to match original spacing */
-.navbar-top .container-fluid { padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 0 !important; padding-right: 0 !important; max-width: 100%; }
-
-/* Breadcrumb pill styling (matches Angular) */
-.breadcrumb-pill {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	background: rgba(255,255,255,0.08);
-	padding: 0.5rem 0.9rem;
-	border-radius: 6px;
-	box-shadow: 0 1px 0 rgba(0,0,0,0.05) inset;
-}
-.breadcrumb-pill .fa-home { color: rgba(255,255,255,0.95); margin-right: 0.35rem; }
-.breadcrumb-pill .breadcrumb-seg { color: rgba(255,255,255,0.95); font-size: 0.96rem; }
-.breadcrumb-pill .breadcrumb-seg a { color: rgba(255,255,255,0.95); text-decoration: none; }
-.breadcrumb-pill .breadcrumb-seg.active { opacity: 0.95; font-weight: 700; }
-
-/* Header spacing tweaks */
-.navbar-top .breadcrumb-pill { margin-left: 1rem; }
-.navbar-top .media-body { margin-right: 1.25rem; }
-
-/* Make all .container-fluid elements span full width and remove left/right gutters
-	 (we keep small internal paddings for components to use where needed) */
-.container-fluid {
-	max-width: 100% !important;
-	width: 100% !important;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
-}
-.pt-8 { padding-top: 2rem !important; }
-
-/* For inner content that needs breathing room, pages should use their own internal
-	 container element. Provide a small responsive fallback for very small screens. */
-@media (max-width: 768px) {
-	.navbar-top .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
-	.main-content { margin-left: 72px; width: calc(100% - 72px); }
-	.main-content > .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
+/* When sidebar expands (nav gets .nav-width or app body gets pinned), push content */
+nav.sidenav.nav-width + .main-content,
+.sidenav.nav-width + .main-content,
+.g-sidenav-pinned .main-content,
+.g-sidenav-pinned + .main-content,
+.main-content.full-width,
+.main-content.expanded {
+  left: 0 !important;
 }
 
-/* NOTE: mobile-specific overlay/collapse styles intentionally removed so
-   the sidebar no longer becomes an off-canvas overlay on small screens.
-   Any responsive tweaks should be provided per-page if desired. */
-
-/* Very small screens - increase touch paddings */
-@media (max-width: 480px) {
-	.breadcrumb-pill { padding: 0.4rem 0.6rem; font-size: 0.9rem; }
-	.pt-8 { padding-top: 1rem !important; }
+/* Header (kept same structure as Angular) */
+.main-content .navbar-top {
+  /* Make the header part of the normal document flow so it scrolls with the page */
+  position: static;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  background: #273245;
+  color: #fff;
 }
