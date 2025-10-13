@@ -20,6 +20,7 @@ import AssignTestSuitesTab from './configuration-package/assign-test-suites-tab/
 import MonthlyReport from './reporting/monthly-report/MonthlyReport';
 import AddTestSuitesAssignment from './configuration-package/assign-test-suites-tab/AddTestSuitesAssignment';
 import './App.css';
+import LogoSetting from './logo-setting/LogoSetting';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -43,6 +44,7 @@ export default function App() {
   <Route path="/wifi-profiles/listing" element={<AuthGuard><Layout><WifiProfilesListing /></Layout></AuthGuard>} />
   <Route path="/wifi-profiles/add" element={<AuthGuard><Layout><AddWifiProfile /></Layout></AuthGuard>} />
   <Route path="/wifi-profiles/update/:id" element={<AuthGuard><Layout><UpdateWifiProfile /></Layout></AuthGuard>} />
+  <Route path="/logo-setting" element={<AuthGuard><Layout><LogoSetting /></Layout></AuthGuard>} />
   {/* Direct routes for listings to match Angular-style links */}
   <Route path="/test-suites/listing" element={<AuthGuard><Layout><TestSuitesTab /></Layout></AuthGuard>} />
   <Route path="/test-suites-assignment/listing" element={<AuthGuard><Layout><AssignTestSuitesTab /></Layout></AuthGuard>} />

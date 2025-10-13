@@ -99,3 +99,9 @@ nav.sidenav.nav-width + .main-content,
   background: #273245;
   color: #fff;
 }
+
+/* Always show the brand/logo in the sidenav, even when not pinned */
+.sidenav .navbar-brand,
+.sidenav .navbar-heading {
+  display: block !important;
+}
