@@ -43,8 +43,8 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
     ]},
     { title: 'General Settings', route: '', isCollapsed: true, isHidden: isHiddenForAdmin, iconClass: 'ni ni-app text-primary', children: [
       { title: 'Device Catalogues', route: '/device-catalogue/listing', isCollapsed: false, isHidden: false, iconClass: '' },
+      { title: 'Build Management', route: '/build-management/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-laptop text-primary' }
     ]},
-    { title: 'Build Management', route: '/build-management/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-laptop text-primary' },
   ]), [isAdmin, isHiddenForAdmin]);
 
   const [activePath, setActivePath] = useState(location.pathname);
