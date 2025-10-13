@@ -18,13 +18,15 @@ html, body, #root {
 
 /* Ensure the main content area handles vertical scrolling internally */
 .main-content {
-	height: 100vh;
+	position: fixed; /* keep content panel pinned to viewport so header's sticky top:0 aligns with viewport top */
+	top: 0;
+	left: 250px; /* offset for expanded sidebar */
+	right: 0;
+	bottom: 0;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
-	width: calc(100% - 250px);
 	margin: 0;
-	margin-left: 250px; /* offset for sidebar so content/headers align flush to it */
-	padding: 0; /* clear any outer padding so internal .container-fluid controls spacing */
+	padding: 0; /* internal content uses .container-fluid for spacing */
 }
 
 /* Keep header sticky at top */
@@ -79,4 +81,20 @@ html, body, #root {
 	.navbar-top .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
 	.main-content { margin-left: 72px; width: calc(100% - 72px); }
 	.main-content > .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
+}
+
+/* Below tablet/desktop widths, collapse sidebar and make main-content full width */
+@media (max-width: 991px) {
+	.sidenav { transform: translateX(-100%); position: fixed; left: 0; top: 0; bottom: 0; z-index: 60; }
+	.sidenav.nav-width { width: 72px !important; }
+	.main-content { left: 0 !important; width: 100% !important; }
+	.navbar-top .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
+	/* ensure scrollbars don't add horizontal space */
+	html, body { overflow-x: hidden; }
+}
+
+/* Very small screens - increase touch paddings */
+@media (max-width: 480px) {
+	.breadcrumb-pill { padding: 0.4rem 0.6rem; font-size: 0.9rem; }
+	.pt-8 { padding-top: 1rem !important; }
 }
