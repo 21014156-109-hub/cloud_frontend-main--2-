@@ -16,17 +16,49 @@ html, body, #root {
 }
 *, *::before, *::after { box-sizing: inherit; }
 
-/* Ensure the main content area handles vertical scrolling internally */
+/* Ensure the main content area handles vertical scrolling internally.
+   Make it flow-based (relative) so the sidenav can push it using margin-left.
+   Sticky header behavior is preserved because the header is inside the
+   same scrolling ancestor. */
 .main-content {
-	position: fixed; /* keep content panel pinned to viewport so header's sticky top:0 aligns with viewport top */
-	top: 0;
-	left: 250px; /* offset for expanded sidebar */
-	right: 0;
-	bottom: 0;
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
+	position: relative;
 	margin: 0;
 	padding: 0; /* internal content uses .container-fluid for spacing */
+	min-height: 100vh;
+	width: 100%;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	transition: margin-left 240ms ease, width 240ms ease, padding 240ms ease;
+}
+
+/* Use margin-left to push content when Argon/JS toggles body classes */
+.g-sidenav-pinned .main-content {
+	margin-left: 250px !important;
+	width: calc(100% - 250px) !important;
+}
+
+.g-sidenav-show .main-content {
+	margin-left: 72px !important;
+	width: calc(100% - 72px) !important;
+}
+
+/* Desktop: make the sidenav part of the normal flow so it pushes content.
+   Keep this limited to desktop sizes to avoid narrow-screen overflow. */
+@media (min-width: 992px) {
+	.sidenav {
+		position: relative;
+		transform: none !important;
+		left: auto !important;
+		top: auto !important;
+		bottom: auto !important;
+		float: left;
+		height: 100vh;
+		z-index: 40; /* below navbar (z-index:50) */
+	}
+
+	.sidenav.nav-width { width: 250px !important; }
+	.g-sidenav-pinned .sidenav { width: 250px !important; }
+	.g-sidenav-show .sidenav { width: 72px !important; }
 }
 
 /* Keep header sticky at top */
@@ -65,6 +97,10 @@ html, body, #root {
 .breadcrumb-pill .breadcrumb-seg a { color: rgba(255,255,255,0.95); text-decoration: none; }
 .breadcrumb-pill .breadcrumb-seg.active { opacity: 0.95; font-weight: 700; }
 
+/* Header spacing tweaks */
+.navbar-top .breadcrumb-pill { margin-left: 1rem; }
+.navbar-top .media-body { margin-right: 1.25rem; }
+
 /* Make all .container-fluid elements span full width and remove left/right gutters
 	 (we keep small internal paddings for components to use where needed) */
 .container-fluid {
@@ -83,15 +119,9 @@ html, body, #root {
 	.main-content > .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
 }
 
-/* Below tablet/desktop widths, collapse sidebar and make main-content full width */
-@media (max-width: 991px) {
-	.sidenav { transform: translateX(-100%); position: fixed; left: 0; top: 0; bottom: 0; z-index: 60; }
-	.sidenav.nav-width { width: 72px !important; }
-	.main-content { left: 0 !important; width: 100% !important; }
-	.navbar-top .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
-	/* ensure scrollbars don't add horizontal space */
-	html, body { overflow-x: hidden; }
-}
+/* NOTE: mobile-specific overlay/collapse styles intentionally removed so
+   the sidebar no longer becomes an off-canvas overlay on small screens.
+   Any responsive tweaks should be provided per-page if desired. */
 
 /* Very small screens - increase touch paddings */
 @media (max-width: 480px) {
