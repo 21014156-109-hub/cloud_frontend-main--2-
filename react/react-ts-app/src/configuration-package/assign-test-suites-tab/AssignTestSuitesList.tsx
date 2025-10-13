@@ -3,6 +3,7 @@ import { TestSuitesAssignmentService } from '../../test-suites/testSuitesAssignm
 import type { ApiResponse } from '../../test-suites/testSuitesAssignment.service';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import AddTestSuitesAssignment from './AddTestSuitesAssignment';
 
 type AssignmentSummary = {
   id: number;
@@ -16,6 +17,7 @@ export default function AssignTestSuitesList() {
   const [records, setRecords] = useState<AssignmentSummary[]>([]);
   const [page] = useState(1);
   const [pageSize] = useState(10);
+  const [showAdd, setShowAdd] = useState(false);
 
   const fetchData = useCallback(async (p: number) => {
     try {
@@ -49,7 +51,7 @@ export default function AssignTestSuitesList() {
       <div className="card-header">
         <div className="row">
           <div className="col-sm-6">
-            <Link className="btn btn-dark-custom btn-padding" to="/test-suites-assignment/add">+ Assign Test Suite</Link>
+            <button className="btn btn-dark-custom btn-padding" onClick={() => setShowAdd(true)}>+ Assign Test Suite</button>
           </div>
           <div className="col-sm-6 text-right">
             <input className="form-control" placeholder="Search" style={{ width: 200 }} />
@@ -57,6 +59,11 @@ export default function AssignTestSuitesList() {
         </div>
       </div>
       <div className="card-body">
+        {showAdd && (
+          <div className="mb-4">
+            <AddTestSuitesAssignment onClose={() => setShowAdd(false)} onSuccess={() => { setShowAdd(false); void fetchData(1); }} />
+          </div>
+        )}
         <table className="table">
           <thead>
             <tr><th>Sr No.</th><th>Tester Name</th><th>Test Suite Name</th><th>Action</th></tr>

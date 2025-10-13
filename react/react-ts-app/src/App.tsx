@@ -15,6 +15,7 @@ import ConfigurationPackage from './configuration-package/ConfigurationPackage';
 import TestSuitesTab from './configuration-package/test-suites-tab/TestSuitesTab';
 import AssignTestSuitesTab from './configuration-package/assign-test-suites-tab/AssignTestSuitesTab';
 import MonthlyReport from './reporting/monthly-report/MonthlyReport';
+import AddTestSuitesAssignment from './configuration-package/assign-test-suites-tab/AddTestSuitesAssignment';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -40,7 +41,7 @@ export default function App() {
   <Route path="/test-suites/listing" element={<AuthGuard><Layout><TestSuitesTab /></Layout></AuthGuard>} />
   <Route path="/test-suites-assignment/listing" element={<AuthGuard><Layout><AssignTestSuitesTab /></Layout></AuthGuard>} />
   {/* Alias Angular-style assignment routes to React pages */}
-  <Route path="/test-suites-assignment/add" element={<AuthGuard><Layout><AddClientTestSuit /></Layout></AuthGuard>} />
+  <Route path="/test-suites-assignment/add" element={<AuthGuard><Layout><AddTestSuitesAssignment /></Layout></AuthGuard>} />
   <Route path="/test-suites-assignment/update/:id" element={<AuthGuard><Layout><UpdateClientTestSuit /></Layout></AuthGuard>} />
         <Route path="*" element={<Login />} />
       </Routes>

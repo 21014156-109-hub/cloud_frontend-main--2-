@@ -13,4 +13,10 @@ export class TestSuitesAssignmentService {
     const res = await fetch(`${this.base}test-suits-assignments/${id}`, { method: 'DELETE', headers: this.headers() });
     return res.json();
   }
+
+  async assignTestSuites(data: { testerId: number; clientTestSuitId: number }): Promise<ApiResponse<Record<string, unknown>>> {
+    const headers = { ...this.headers(), 'Content-Type': 'application/json' } as Record<string, string>;
+    const res = await fetch(`${this.base}test-suits-assignments/assign`, { method: 'POST', headers, body: JSON.stringify(data) });
+    return res.json();
+  }
 }
