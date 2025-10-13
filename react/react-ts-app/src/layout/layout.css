@@ -2,8 +2,9 @@
 
 /* Helper variables */
 :root {
-  --sidebar-collapsed: 72px;
-  --sidebar-expanded: 200px;
+  /* Make the collapsed width match Argon defaults and increase expanded width */
+  --sidebar-collapsed: 62px; /* smaller collapsed width so icons-only fits */
+  --sidebar-expanded: 250px; /* increased expanded width */
   --header-height: 50px;
 }
 
@@ -40,13 +41,20 @@ nav.sidenav, .sidenav {
     top: 0;
     bottom: 0;
     width: var(--sidebar-collapsed);
-    transition: width 200ms ease;
+    transition: width 200ms ease, transform 200ms ease;
     overflow-y: auto;
     /* keep sidebar below header and content so it pushes the layout */
     z-index: 30;
   }
   /* expanded state when .nav-width class is present (same as Angular) */
   nav.sidenav.nav-width, .sidenav.nav-width { width: var(--sidebar-expanded) !important; }
+
+  /* When pinned, ensure main content is offset by the expanded width */
+  .g-sidenav-pinned .sidenav + .main-content,
+  nav.sidenav.nav-width + .main-content,
+  .sidenav.nav-width + .main-content {
+    margin-left: var(--sidebar-expanded);
+  }
 }
 
 /* Small screens: keep sidebar inline (no overlay) */
@@ -60,18 +68,18 @@ nav.sidenav, .sidenav {
    only scrolling container on the page. Default offset equals collapsed sidebar. */
 .main-content {
   position: absolute;
-  /* left: var(--sidebar-collapsed);  */
-	left: 0;
+  left: 0;
   top: 0;
   right: 0;
   bottom: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  transition: left 200ms ease;
+  transition: margin-left 200ms ease, left 200ms ease;
   background: #f6f7f9;
 }
 
 /* When sidebar expands (nav gets .nav-width or app body gets pinned), push content */
+/* Keep legacy selectors but prefer margin-left to push content when pinned */
 nav.sidenav.nav-width + .main-content,
 .sidenav.nav-width + .main-content,
 .g-sidenav-pinned .main-content,

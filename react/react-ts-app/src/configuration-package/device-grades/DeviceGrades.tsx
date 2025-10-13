@@ -6,13 +6,27 @@ export default function DeviceGrades() {
   const svc = useMemo(() => new ConfigurationPackageService(), []);
   const [grades, setGrades] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const resp = await svc.getClientGrades();
-      if (resp.status) {
-        const g = resp.data?.grades ?? [];
-        setGrades(g.length ? g : ['']);
+      try {
+        const resp = await svc.getClientGrades();
+        if (resp.status) {
+          const g = resp.data?.grades ?? [];
+          setGrades(g.length ? g : ['']);
+        } else {
+          toast.error(resp.message || 'Failed to load grades');
+        }
+      } catch (err) {
+        let msg = 'Failed to load grades';
+        if (err && typeof err === 'object' && 'message' in err) {
+          const rec = err as unknown as Record<string, unknown>;
+          if (typeof rec.message === 'string') msg = rec.message as string;
+        }
+        toast.error(msg);
+      } finally {
+        setLoading(false);
       }
     })();
   }, [svc]);
@@ -35,7 +49,7 @@ export default function DeviceGrades() {
     try {
       const resp = await svc.updateClientGrades(cleaned);
       if (resp.status) { toast.success(resp.message || 'Grades updated'); await load(); }
-      else { toast.error('Failed to update grades'); }
+      else { toast.error(resp.message || 'Failed to update grades'); }
     } catch { toast.error('Failed to update grades'); } finally { setSaving(false); }
   }
 
@@ -51,6 +65,7 @@ export default function DeviceGrades() {
         </div>
       </div>
       <div className="card-body">
+        {loading ? <div style={{ textAlign: 'center', padding: 40 }}>Loading…</div> : null}
         <div className="row">
           {grades.map((grade, i) => (
             <div className="col-md-2" key={i}>
