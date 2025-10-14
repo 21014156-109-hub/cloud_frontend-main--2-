@@ -3,9 +3,9 @@
 .accordion-toggle:focus { outline: none; box-shadow: none; }
 .accordion-content { padding: 8px 0 16px 0; display: none; }
 .accordion-content.show { display: block; }
-.caret-left { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(111,66,193,0.06); color: #6f42c1; margin-right: 12px; }
+.caret-left { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: transparent; color: #6f42c1; margin-right: 12px; }
 .accordion-title { font-weight: 600; color: #6f42c1; }
-.accordion-toggle.open .caret-left { background: rgba(111,66,193,0.12); }
+.accordion-toggle.open .caret-left { background: transparent; }
 .btn-add-request { background: #1fb16a; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: 600; }
 .btn-add-request:focus { outline: none; box-shadow: none; }
 .btn-add-request:hover { opacity: 0.95; }
