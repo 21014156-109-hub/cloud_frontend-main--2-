@@ -1,9 +1,21 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { Breadcrumbs } from '../components';
 import { getAuthUserData, unsetAuthUserData } from '../utils/helper';
 
 export default function Header({ onToggle }: { onToggle?: () => void }) {
   const user = useMemo(() => getAuthUserData(), []);
+  const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (open && toggleRef.current && !toggleRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, [open]);
   function toggleSidebarFromHeader() {
     onToggle?.();
   }
@@ -17,8 +29,13 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
           </button>
           <Breadcrumbs />
           <ul className="navbar-nav align-items-center d-none d-md-flex ml-auto">
-            <li className="nav-item dropdown">
-              <a className="nav-link pr-0 dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
+            <li className={`nav-item dropdown ${open ? 'show' : ''}`} ref={toggleRef}>
+              <button
+                className={`nav-link pr-0 dropdown-toggle d-flex align-items-center btn btn-link ${open ? 'show' : ''}`}
+                aria-expanded={open}
+                onClick={(e) => { e.stopPropagation(); setOpen(s => !s); }}
+                type="button"
+              >
                 <div className="media align-items-center">
                   <span className="avatar avatar-sm rounded-circle">
                     <img alt="..." src="/assets/img/brand/user.png" />
@@ -26,9 +43,10 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
                   <div className="media-body ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">{user ? `${user.fName || ''} ${user.lName || ''}` : ''}</span>
                   </div>
+                  <i className={`caret-icon fa fa-caret-${open ? 'down' : 'right'} ml-2`} aria-hidden="true" />
                 </div>
-              </a>
-              <div className="dropdown-menu dropdown-menu-right">
+              </button>
+              <div className={`dropdown-menu dropdown-menu-right ${open ? 'show' : ''}`} style={{ position: 'absolute' }}>
                 <a className="dropdown-item" href="#"><i className="ni ni-single-02" /> <span>My profile</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-settings-gear-65" /> <span>Settings</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-calendar-grid-58" /> <span>Activity</span></a>

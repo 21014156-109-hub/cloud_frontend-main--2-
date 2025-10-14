@@ -100,11 +100,23 @@ nav.sidenav.nav-width + .main-content,
   color: #fff;
 }
 
+/* Remove focus outline on header buttons to match Angular look */
+.navbar .btn:focus, .navbar .nav-link:focus, .nav-item .btn:focus { outline: none; box-shadow: none; }
+
+/* caret icon next to user avatar */
+.caret-icon { font-size: 0.75rem; opacity: 0.95; color: #ffffff; margin-left: 6px; transition: transform 150ms ease; }
+.nav-item.dropdown.show .caret-icon { transform: rotate(180deg); }
+
 /* Always show the brand/logo in the sidenav, even when not pinned */
 .sidenav .navbar-brand,
 .sidenav .navbar-heading {
   display: block !important;
 }
+
+/* Sidebar caret style for collapsible groups */
+.sidebar-caret { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(111,66,193,0.06); color: #6f42c1; margin-left: auto; }
+.sidebar-caret.open { background: rgba(111,66,193,0.12); }
+.sidebar-caret i { font-size: 0.75rem; }
 
 /* Footer readability: make text and link light black */
 .footer .copyright,

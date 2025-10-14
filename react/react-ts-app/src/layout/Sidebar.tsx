@@ -116,7 +116,9 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
                     >
                       <i className={item.iconClass} />
                       <span className="nav-link-text">{item.title}</span>
-                      <span className={`caret ${openKeys[pKey] ? 'rotated' : ''}`} style={{ marginLeft: 'auto' }}>▸</span>
+                      <span className={`sidebar-caret ${openKeys[pKey] ? 'open' : ''}`}>
+                        <i className={`fa fa-chevron-${openKeys[pKey] ? 'down' : 'right'}`} />
+                      </span>
                     </a>
                   )}
                   {item.children && (

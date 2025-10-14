@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import LicenseService from './license.service';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '../shared-components/breadcrumbs/Breadcrumbs';
+import './licenses.css';
 
 export default function AddRequest() {
   const [types, setTypes] = useState<any[]>([]);
@@ -31,20 +33,28 @@ export default function AddRequest() {
 
   return (
     <div className="container-fluid mt-3">
-      <h3>Add License Request</h3>
-      <div className="mb-3">
-        {/* Simple list of types with inputs to set assignCount */}
-        {types.map((t, idx) => (
-          <div className="form-group row" key={t.id || idx}>
-            <label className="col-sm-6 col-form-label">{t.title}</label>
-            <div className="col-sm-3">
-              <input className="form-control" type="number" value={t.assignCount || 0} onChange={(e) => { t.assignCount = Number(e.target.value); setTypes([...types]); }} />
+      <Breadcrumbs />
+      <div className="row">
+        <div className="col-xl-8">
+          <div className="card">
+            <div className="card-body">
+              <h3 className="mb-3">Add License Request</h3>
+              <div className="mb-3">
+                {types.map((t, idx) => (
+                  <div className="form-group row" key={t.id || idx}>
+                    <label className="col-sm-6 col-form-label">{t.title}</label>
+                    <div className="col-sm-3">
+                      <input className="form-control" type="number" value={t.assignCount || 0} onChange={(e) => { t.assignCount = Number(e.target.value); setTypes([...types]); }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="text-end">
+                <button className="btn btn-success" onClick={save}>Submit</button>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
-      <div className="text-end">
-        <button className="btn btn-success" onClick={save}>Submit</button>
+        </div>
       </div>
     </div>
   );
