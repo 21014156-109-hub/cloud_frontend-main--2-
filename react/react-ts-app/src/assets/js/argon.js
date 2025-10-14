@@ -64,10 +64,18 @@ var Layout = (function() {
   }
 
   document.body.addEventListener('click', function(e) {
-    e.preventDefault();
-
-    var target = e.target;
-    var action = target.dataset.action;
+    // Only intercept clicks that are intended for argon controls by checking
+    // whether the clicked element (or an ancestor) has a `data-action`.
+    let target = e.target;
+    // walk up to find actionable element
+    while (target && target !== document.body && !target.dataset?.action) {
+      target = target.parentNode;
+    }
+    const action = target && target !== document.body ? target.dataset.action : undefined;
+    if (!action) {
+      // Not an argon control — leave the event to proceed normally (do not preventDefault)
+      return;
+    }
 
     // Manage actions
     switch (action) {

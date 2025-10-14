@@ -11,17 +11,20 @@ export default function UpdateProfile() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-  const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
-      w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Update Profile', link: '' }];
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'Update Profile', link: '' }];
+
+    // read auth user once at mount to avoid effect re-running due to object identity changes
+    const authUser = getAuthUserData();
     // prefill from local storage immediately
-    if (user) {
-      setForm(f => ({ ...f, fName: (user.fName as string) || '', lName: (user.lName as string) || '', email: (user.email as string) || '', userName: (user.userName as string) || '' }));
+    if (authUser) {
+      setForm(f => ({ ...f, fName: (authUser.fName as string) || '', lName: (authUser.lName as string) || '', email: (authUser.email as string) || '', userName: (authUser.userName as string) || '' }));
     }
 
     // fetch authoritative record from server if possible
     (async () => {
       try {
-        const id = (user && user.id) ? Number(user.id) : 0;
+        const id = (authUser && authUser.id) ? Number(authUser.id) : 0;
         if (id > 0) {
           const rec = await profileSvc.getRecord(id) as unknown;
           // align shape: rec.collection contains user info in Angular API, but may vary; try common keys
@@ -46,8 +49,9 @@ export default function UpdateProfile() {
         // ignore fetch errors; keep local data
       }
     })();
-      return () => { w.__BREADCRUMB = []; };
-  }, [user]);
+
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -72,9 +76,9 @@ export default function UpdateProfile() {
       }
       if (ok) {
         toast.success('Profile updated');
-        // Update local storage user data
+        // Update local storage user data and local form state instead of forcing a full reload
         updateAuthUserData(user, { fName: payload.fName, lName: payload.lName });
-        setTimeout(() => { window.location.reload(); }, 1200);
+        setForm(f => ({ ...f, fName: payload.fName, lName: payload.lName }));
       }
     } catch (err) {
       // try to extract error message
@@ -95,24 +99,7 @@ export default function UpdateProfile() {
     setTouched(t => ({ ...t, [field]: true }));
   }
 
-  function getFieldError(field: string): string | null {
-    if ((field === 'fName' || field === 'lName')) {
-      if (touched[field] && !form[field as keyof typeof form]) return `${field === 'fName' ? 'First Name' : 'Last Name'} is required`;
-      return null;
-    }
-    if (field === 'confirmPassword') {
-      if (form.password) {
-        if (touched.confirmPassword && !form.confirmPassword) return 'Confirm Password is required';
-        if (form.confirmPassword && form.password !== form.confirmPassword) return 'Passwords do not match';
-      }
-      return null;
-    }
-    if (field === 'password') {
-      if (touched.password && form.password && form.password.length < 6) return 'Password must be at least 6 characters';
-      return null;
-    }
-    return null;
-  }
+
 
   const isFormValid = (() => {
     if (!form.fName.trim() || !form.lName.trim()) return false;

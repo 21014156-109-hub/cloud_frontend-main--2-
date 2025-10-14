@@ -51,20 +51,39 @@ export default function Breadcrumbs() {
 
   // Prefer a breadcrumb set by pages (window.__BREADCRUMB) when available
   const win = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
-  const crumbs = Array.isArray(win.__BREADCRUMB) && win.__BREADCRUMB.length > 0 ? win.__BREADCRUMB : [{ name: mainSectionTitle(location.pathname) }];
-  const current = crumbs[crumbs.length - 1];
+  const crumbs = Array.isArray(win.__BREADCRUMB) && win.__BREADCRUMB.length > 0
+    ? win.__BREADCRUMB
+    : [{ name: mainSectionTitle(location.pathname), link: '/dashboard' }];
 
   if (!visible) return null;
 
   return (
-    <nav aria-label="breadcrumb">
-      <div ref={wrapperRef} className="breadcrumb-pill" role="navigation" style={{ display: 'flex', alignItems: 'center' }}>
-        <Link to="/dashboard" aria-label="Go to Dashboard" style={{ color: 'inherit' }}>
-          <i className="fa fa-home" aria-hidden="true" />
-        </Link>
-        <span className="sep" style={{ margin: '0 8px' }}>-</span>
-        <span className="breadcrumb-active" style={{ fontWeight: 600 }}>{current.name}</span>
+    <div ref={wrapperRef} className="header bg-transparent" style={{ width: '100%' }}>
+      <div className="container-fluid">
+        <div className="header-body">
+          <div className="row align-items-center">
+            <div className="col-lg-12">
+              <nav aria-label="breadcrumb" className="d-none d-md-inline-block">
+                <ol className="breadcrumb breadcrumb-links breadcrumb-dark">
+                  {crumbs.map((record, idx) => (
+                    <li className="breadcrumb-item" key={idx}>
+                      {record.name === 'Dashboard' ? (
+                        <Link to={record.link || '/dashboard'}>
+                          <i className="fas fa-home font-black" />
+                        </Link>
+                      ) : record.link && record.link !== '' ? (
+                        <Link className="font-black" to={record.link}>{record.name}</Link>
+                      ) : (
+                        <span>{record.name}</span>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
       </div>
-    </nav>
+    </div>
   );
 }
