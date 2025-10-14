@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { SharedProvider } from './components';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AuthGuard from './core/guard/authGuard';
@@ -40,6 +41,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function App() {
   return (
     <BrowserRouter>
+      <SharedProvider>
       <ToastContainer position="top-right" autoClose={2500} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       <Routes>
         <Route path="/" element={<Login />} />
@@ -79,6 +81,7 @@ export default function App() {
   <Route path="/test-suites-assignment/update/:id" element={<AuthGuard><Layout><UpdateClientTestSuit /></Layout></AuthGuard>} />
         <Route path="*" element={<Login />} />
       </Routes>
+      </SharedProvider>
     </BrowserRouter>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getAuthUserData, unsetAuthUserData } from '../utils/helper';
+import { Breadcrumbs } from '../components';
 
 export default function Header({ onToggle }: { onToggle?: () => void }) {
   const user = useMemo(() => getAuthUserData(), []);
@@ -20,15 +21,49 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
   function toggleSidebarFromHeader() {
     onToggle?.();
   }
+  const location = useLocation();
+
+  function mainSectionTitle(pathname: string): string {
+    if (!pathname || pathname === '/' || pathname.startsWith('/dashboard')) return 'Dashboard';
+    const p = pathname.toLowerCase();
+    if (p.startsWith('/devices') || p.startsWith('/reporting') || p.startsWith('/clouddb')) return 'Device Processing';
+    if (p.startsWith('/configuration-package') || p.startsWith('/client-test-suit')) return 'Configuration';
+    if (p.startsWith('/build-management')) return 'Build Management';
+  if (p.startsWith('/wifi-profiles') || p.startsWith('/logo-setting') || p.startsWith('/client-service-settings')) return 'Organization Settings';
+  if (p.startsWith('/users') || p.startsWith('/warehouse') || p.startsWith('/testers') || p.startsWith('/stations')) return 'User Management';
+  if (p.startsWith('/licenses')) return 'User Management';
+  // Profile pages should show Profile Settings in the header
+  if (p.startsWith('/profile')) return 'Profile Settings';
+  if (p.startsWith('/device-catalogue')) return 'General Settings';
+    return 'Dashboard';
+  }
+  const headerLabel = mainSectionTitle(location.pathname);
   return (
     <nav className="navbar navbar-top navbar-expand navbar-dark bg-dark-custom border-bottom">
       <div className="container-fluid">
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {/* Header toggler: opens/closes the sidenav (keeps parity with Angular header toggler) */}
-          <button className="btn btn-link text-white p-0 mr-3 d-md-none" onClick={toggleSidebarFromHeader} aria-label="Toggle sidebar">
-            <i className="ni ni-bullet-list-67" style={{ fontSize: '1.25rem' }} />
-          </button>
-          <ul className="navbar-nav align-items-center d-none d-md-flex ml-auto">
+          <div className="d-flex align-items-center">
+            {/* Place breadcrumbs directly in the header container so they appear inside the dark header bar */}
+            <button className="btn btn-link text-white p-0 mr-3 d-md-none" onClick={toggleSidebarFromHeader} aria-label="Toggle sidebar">
+              <i className="ni ni-bullet-list-67" style={{ fontSize: '1.25rem' }} />
+            </button>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate('/dashboard')}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/dashboard'); }}
+              style={{ display: 'flex', alignItems: 'center', color: '#fff', cursor: 'pointer' }}
+              aria-label="Go to Dashboard"
+            >
+              <i className="fa fa-home" style={{ marginRight: 10 }} aria-hidden="true" />
+              <span style={{ fontWeight: 600 }}>{headerLabel}</span>
+            </div>
+            <div style={{ width: 16 }} />
+            <Breadcrumbs />
+          </div>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            {/* Header toggler for small screens kept in the same flow */}
+            <div style={{ flex: 1 }} />
+            <ul className="navbar-nav align-items-center d-none d-md-flex ml-auto">
             <li className={`nav-item dropdown ${open ? 'show' : ''}`} ref={toggleRef}>
               <button
                 className={`nav-link pr-0 dropdown-toggle d-flex align-items-center btn btn-link ${open ? 'show' : ''}`}

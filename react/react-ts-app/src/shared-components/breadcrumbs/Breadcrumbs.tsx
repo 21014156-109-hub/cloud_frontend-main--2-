@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 
 // Map top-level routes (and some special cases) to their main section name.
 function mainSectionTitle(pathname: string): string {
@@ -25,6 +26,9 @@ function mainSectionTitle(pathname: string): string {
   // Licenses pages are part of user/admin management in the app
   if (p.startsWith('/licenses')) return 'User Management';
 
+  // Profile page
+  if (p.startsWith('/profile')) return 'Profile';
+
   // General Settings
   if (p.startsWith('/device-catalogue')) return 'General Settings';
 
@@ -34,16 +38,32 @@ function mainSectionTitle(pathname: string): string {
 
 export default function Breadcrumbs() {
   const location = useLocation();
-  const label = mainSectionTitle(location.pathname);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    // If this breadcrumb is rendered inside the main content (.main-content or #panel), hide it.
+    if (wrapperRef.current) {
+      const insidePanel = Boolean(wrapperRef.current.closest('#panel') || wrapperRef.current.closest('.main-content'));
+      if (insidePanel) setVisible(false);
+    }
+  }, []);
+
+  // Prefer a breadcrumb set by pages (window.__BREADCRUMB) when available
+  const win = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+  const crumbs = Array.isArray(win.__BREADCRUMB) && win.__BREADCRUMB.length > 0 ? win.__BREADCRUMB : [{ name: mainSectionTitle(location.pathname) }];
+  const current = crumbs[crumbs.length - 1];
+
+  if (!visible) return null;
 
   return (
     <nav aria-label="breadcrumb">
-      <div className="breadcrumb-pill" role="navigation" style={{ display: 'flex', alignItems: 'center' }}>
+      <div ref={wrapperRef} className="breadcrumb-pill" role="navigation" style={{ display: 'flex', alignItems: 'center' }}>
         <Link to="/dashboard" aria-label="Go to Dashboard" style={{ color: 'inherit' }}>
           <i className="fa fa-home" aria-hidden="true" />
         </Link>
         <span className="sep" style={{ margin: '0 8px' }}>-</span>
-        <span className="breadcrumb-active" style={{ fontWeight: 600 }}>{label}</span>
+        <span className="breadcrumb-active" style={{ fontWeight: 600 }}>{current.name}</span>
       </div>
     </nav>
   );

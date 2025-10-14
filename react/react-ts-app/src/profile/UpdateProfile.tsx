@@ -8,6 +8,7 @@ export default function UpdateProfile() {
   const user = getAuthUserData();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ fName: '', lName: '', email: '', userName: '', password: '', confirmPassword: '', currentPassword: '' });
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
   const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
@@ -90,6 +91,40 @@ export default function UpdateProfile() {
     }
   }
 
+  function markTouched(field: string) {
+    setTouched(t => ({ ...t, [field]: true }));
+  }
+
+  function getFieldError(field: string): string | null {
+    if ((field === 'fName' || field === 'lName')) {
+      if (touched[field] && !form[field as keyof typeof form]) return `${field === 'fName' ? 'First Name' : 'Last Name'} is required`;
+      return null;
+    }
+    if (field === 'confirmPassword') {
+      if (form.password) {
+        if (touched.confirmPassword && !form.confirmPassword) return 'Confirm Password is required';
+        if (form.confirmPassword && form.password !== form.confirmPassword) return 'Passwords do not match';
+      }
+      return null;
+    }
+    if (field === 'password') {
+      if (touched.password && form.password && form.password.length < 6) return 'Password must be at least 6 characters';
+      return null;
+    }
+    return null;
+  }
+
+  const isFormValid = (() => {
+    if (!form.fName.trim() || !form.lName.trim()) return false;
+    if (form.password) {
+      if (!form.currentPassword) return false;
+      if (!form.confirmPassword) return false;
+      if (form.password !== form.confirmPassword) return false;
+      if (form.password.length < 6) return false;
+    }
+    return true;
+  })();
+
   return (
     <div>
       <Breadcrumbs />
@@ -104,13 +139,15 @@ export default function UpdateProfile() {
                       <div className="col-lg-6">
                         <div className="form-group">
                           <label className="form-control-label" htmlFor="fName">First Name</label>
-                          <input id="fName" value={form.fName} onChange={e => setForm({ ...form, fName: e.target.value })} className="form-control" autoComplete="new-password" />
+                          <input id="fName" value={form.fName} onChange={e => setForm({ ...form, fName: e.target.value })} onBlur={() => markTouched('fName')} className="form-control" autoComplete="new-password" />
+                          {touched.fName && !form.fName && <small className="text-danger">First Name is required</small>}
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="form-group">
                           <label className="form-control-label" htmlFor="lName">Last Name</label>
-                          <input id="lName" value={form.lName} onChange={e => setForm({ ...form, lName: e.target.value })} className="form-control" autoComplete="new-password" />
+                          <input id="lName" value={form.lName} onChange={e => setForm({ ...form, lName: e.target.value })} onBlur={() => markTouched('lName')} className="form-control" autoComplete="new-password" />
+                          {touched.lName && !form.lName && <small className="text-danger">Last Name is required</small>}
                         </div>
                       </div>
                       <div className="col-lg-6">
@@ -128,7 +165,8 @@ export default function UpdateProfile() {
                       <div className="col-lg-6">
                         <div className="form-group">
                           <label className="form-control-label" htmlFor="currentPassword">Current Password</label>
-                          <input id="currentPassword" type="password" value={form.currentPassword} onChange={e => setForm({ ...form, currentPassword: e.target.value })} className="form-control" autoComplete="new-password" />
+                          <input id="currentPassword" type="password" value={form.currentPassword} onChange={e => setForm({ ...form, currentPassword: e.target.value })} onBlur={() => markTouched('currentPassword')} className="form-control" autoComplete="new-password" />
+                        
                         </div>
                       </div>
                     </div>
@@ -136,19 +174,21 @@ export default function UpdateProfile() {
                       <div className="col-lg-6">
                         <div className="form-group">
                           <label className="form-control-label" htmlFor="password">Password</label>
-                          <input id="password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="form-control" autoComplete="new-password" />
+                          <input id="password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} onBlur={() => markTouched('password')} className="form-control" autoComplete="new-password" />
+                          {touched.password && form.password && form.password.length < 6 && <small className="text-danger">Password must be at least 6 characters</small>}
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="form-group">
                           <label className="form-control-label" htmlFor="confirmPassword">Confirm Password</label>
-                          <input id="confirmPassword" type="password" value={form.confirmPassword} onChange={e => setForm({ ...form, confirmPassword: e.target.value })} className="form-control" autoComplete="new-password" />
+                          <input id="confirmPassword" type="password" value={form.confirmPassword} onChange={e => setForm({ ...form, confirmPassword: e.target.value })} onBlur={() => markTouched('confirmPassword')} className="form-control" autoComplete="new-password" />
+                          {touched.confirmPassword && form.password && (!form.confirmPassword || form.password !== form.confirmPassword) && <small className="text-danger">{!form.confirmPassword ? 'Confirm Password is required' : 'Passwords do not match'}</small>}
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="col-sm-12 text-right">
-                    <button className="btn btn-padding btn-dark-custom" type="submit" disabled={loading}>Submit</button>
+                    <button className="btn btn-padding btn-dark-custom" type="submit" disabled={loading || !isFormValid}>Submit</button>
                   </div>
                 </form>
               </div>

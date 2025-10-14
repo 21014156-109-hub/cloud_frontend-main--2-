@@ -78,6 +78,18 @@ nav.sidenav, .sidenav {
   background: #f6f7f9;
 }
 
+/* Reduce excessive top spacing inside pages: many pages use utility classes
+   like `pt-8`, `pt-3`, `pt-0`. When content renders inside `.main-content`
+   we want a consistent small gap from the header (≈20px). This override
+   purposefully targets container elements and any class containing `pt-`
+   so pages using different utility variants are normalized without
+   editing each page. */
+.main-content .container-fluid,
+.main-content > .container,
+.main-content [class*="pt-"] {
+  padding-top: 20px !important;
+}
+
 /* When sidebar expands (nav gets .nav-width or app body gets pinned), push content */
 /* Keep legacy selectors but prefer margin-left to push content when pinned */
 nav.sidenav.nav-width + .main-content,
