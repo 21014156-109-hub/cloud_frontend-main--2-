@@ -34,11 +34,12 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
       { title: 'ESN Service Settings', route: '/client-service-settings', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: '' },
     ]},
     { title: 'User Management', route: '/users', isCollapsed: true, isHidden: false, iconClass: 'ni ni-circle-08 text-success', children: [
-      { title: 'Clients Management', route: '/users/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-single-02 text-orange' },
+      // Clients Management should be visible so users can access listing; keep other children restricted
+      { title: 'Clients Management', route: '/users/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-single-02 text-orange' },
       { title: 'Warehouse Management', route: '/warehouse/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
-      { title: 'Testers Management', route: '/testers/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-basket text-success' },
-      { title: 'Stations Management', route: '/stations/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-basket text-success' },
-      { title: 'Tester Assignment', route: '/stations-assignment/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-basket text-success' },
+    { title: 'Testers Management', route: '/testers/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-basket text-success' },
+    { title: 'Stations Management', route: '/stations/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
+    { title: 'Tester Assignment', route: '/stations-assignment/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
       { title: 'License Request ', route: `/licenses/${isAdmin ? 'admin-request' : 'request'}`, isCollapsed: false, isHidden: false, iconClass: '' },
     ]},
     { title: 'General Settings', route: '', isCollapsed: true, isHidden: isHiddenForAdmin, iconClass: 'ni ni-app text-primary', children: [
