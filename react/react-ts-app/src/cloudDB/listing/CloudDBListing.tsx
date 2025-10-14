@@ -215,7 +215,12 @@ export default function CloudDBListing() {
     }).catch(() => toast.error('Failed to export'));
   }
 
-  function deviceReport(id?: number) { if (typeof id === 'number') window.open(`/device-report?id=${id}`, '_blank'); }
+  function deviceReport(id?: number) {
+    if (typeof id !== 'number') return;
+    const baseUrl = (window as any).__VITE_BASE_URL_UI || (typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_BASE_URL_UI : undefined) || window.location.origin;
+    const url = `${String(baseUrl).replace(/\/$/, '')}/device-report?id=${id}`;
+    window.open(url, '_blank');
+  }
 
   function text(v: string | number | null | undefined): string { return v == null || v === '' ? 'N/A' : String(v); }
 

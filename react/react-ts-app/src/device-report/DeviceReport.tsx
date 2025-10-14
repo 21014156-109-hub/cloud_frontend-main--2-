@@ -89,8 +89,9 @@ export default function DeviceReport() {
       setCountPassed(passed);
       setTestRecords(tests);
 
-      const baseUrl = window.location.origin;
-  const qdata = `${baseUrl}/device-report?id=${record.transactionId}&IMEI=${record.imei}`;
+    // Use Vite env that mirrors Angular's environment.base_url_ui when available
+    const baseUrl = (import.meta as any).env?.VITE_BASE_URL_UI || window.location.origin;
+    const qdata = `${baseUrl.replace(/\/$/, '')}/device-report?id=${record.transactionId}&IMEI=${record.imei}`;
   setQrcodedata(qdata);
   QRCode.toDataURL(qdata).then((url: string) => setQrCodeImageUrl(url)).catch((e: any) => console.error(e));
     } catch (err) {

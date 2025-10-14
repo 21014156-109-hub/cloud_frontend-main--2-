@@ -19,6 +19,10 @@ import UpdateWarehouse from './warehouses/update/UpdateWarehouse';
 import Layout from './layout/Layout';
 import CloudDBListing from './cloudDB/listing/CloudDBListing';
 import DeviceResultAnalysis from './cloudDB/analysis/DeviceResultAnalysis';
+import DeviceCatalogueListing from './device-catalogue/DeviceCatalogueListing';
+import AddDeviceCatalogue from './device-catalogue/AddDeviceCatalogue';
+import UpdateDeviceCatalogue from './device-catalogue/UpdateDeviceCatalogue';
+import ViewDeviceCatalogue from './device-catalogue/ViewDeviceCatalogue';
 import ConfigurationPackage from './configuration-package/ConfigurationPackage';
 import TestSuitesTab from './configuration-package/test-suites-tab/TestSuitesTab';
 import AssignTestSuitesTab from './configuration-package/assign-test-suites-tab/AssignTestSuitesTab';
@@ -58,6 +62,10 @@ export default function App() {
   <Route path="/devices/listing" element={<AuthGuard><Layout><CloudDBListing /></Layout></AuthGuard>} />
     <Route path="/reporting/monthly-report" element={<AuthGuard><Layout><MonthlyReport /></Layout></AuthGuard>} />
   <Route path="/cloudDB/analysis" element={<AuthGuard><Layout><DeviceResultAnalysis /></Layout></AuthGuard>} />
+  <Route path="/device-catalogue/listing" element={<AuthGuard><Layout><DeviceCatalogueListing /></Layout></AuthGuard>} />
+  <Route path="/device-catalogue/add" element={<AuthGuard><Layout><AddDeviceCatalogue /></Layout></AuthGuard>} />
+  <Route path="/device-catalogue/update" element={<AuthGuard><Layout><UpdateDeviceCatalogue /></Layout></AuthGuard>} />
+  <Route path="/device-catalogue/view/:id" element={<AuthGuard><Layout><ViewDeviceCatalogue /></Layout></AuthGuard>} />
   <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
   <Route path="/licenses/listing" element={<AuthGuard><Layout><LicensesListing /></Layout></AuthGuard>} />
   <Route path="/licenses/add" element={<AuthGuard><Layout><AddLicenseRequest /></Layout></AuthGuard>} />
