@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { LogosService } from './logos.service';
-import http from '../services/http';
+import { UserService } from '../users/user.service';
 import { getAuthUserData, getClientID } from '../utils/helper';
 import { toast } from 'react-toastify';
 
@@ -12,6 +12,7 @@ export default function LogoSetting() {
   const clientId = getClientID();
   const [clients, setClients] = useState<{ id: number; text: string }[]>([]);
   const [selectedClient, setSelectedClient] = useState<{ id: number; text: string } | null>(null);
+  // users service will be instantiated inside fetchClients so it doesn't change across renders
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [logoImage, setLogoImage] = useState<string | ArrayBuffer | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -22,21 +23,32 @@ export default function LogoSetting() {
     return () => { w.__BREADCRUMB = []; };
   }, []);
 
-  useEffect(() => {
-    if (isAdmin) fetchClients();
-    else fetchClientLogo(clientId);
-  }, [isAdmin, clientId]);
-
-  async function fetchClients(search = '') {
+  // Fetch clients or client logo on mount / when admin status changes
+  const fetchClients = useCallback(async (search = '') => {
     try {
-      const resp = await http(`users?search=${encodeURIComponent(search)}`);
+      // Match Angular: getRecords(0, 'client', '1', search)
+      const users = new UserService();
+      const resp = await users.getRecords(0, 'client', '1', search);
       if (resp.status) {
-        const list = resp.data || [] as unknown[];
-        setClients((list as Array<Record<string, unknown>>).map((rec) => ({ id: Number(rec.id as number), text: `${rec.fName as string} ${rec.lName as string} (${rec.userName as string})` })));
+        const list: Array<{ id: number; fName?: string; lName?: string; userName?: string }> = resp.data || [];
+        setClients(list.map((rec) => ({ id: Number(rec.id), text: `${rec.fName || ''} ${rec.lName || ''} (${rec.userName || ''})` })));
       }
     } catch {
-      // ignore
+      // ignore errors for now
     }
+  }, []);
+
+  useEffect(() => {
+    if (isAdmin) { fetchClients(); } else { fetchClientLogo(clientId); }
+  }, [isAdmin, clientId, fetchClients]);
+
+  function onClientSearch(term: string) {
+    if (!term || term.length === 0) { void fetchClients(); }
+    else if (term.length >= 2) { void fetchClients(term); }
+  }
+
+  function onClientDropdownOpen() {
+    void fetchClients();
   }
 
   async function fetchClientLogo(id: number) {
@@ -62,16 +74,39 @@ export default function LogoSetting() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitted(true);
+    // If admin, require a client selection
+    if (isAdmin && !selectedClient) {
+      toast.error('Please select a client before submitting');
+      return;
+    }
+    if (!selectedFile) {
+      toast.error('Please select a logo file before submitting');
+      return;
+    }
+
     const fd = new FormData();
-    if (selectedFile) {
-      fd.append('clientId', isAdmin ? String(selectedClient?.id ?? '') : String(clientId));
-      fd.append('logo', selectedFile);
-      try {
-        const resp = await svc.uploadLogotoBucket(fd);
-        if (resp.status) toast.success('Logo Added');
-      } catch {
-        toast.error('Upload failed');
+    fd.append('clientId', isAdmin ? String(selectedClient?.id ?? '') : String(clientId));
+    fd.append('logo', selectedFile);
+    try {
+      const resp = await svc.uploadLogotoBucket(fd);
+      if (resp.status) {
+        toast.success('Logo Added');
+        // Refresh preview for the selected client (or current client)
+        const cid = isAdmin ? (selectedClient?.id ?? clientId) : clientId;
+        void fetchClientLogo(Number(cid));
+      } else {
+        toast.error(resp?.message || 'Upload failed');
       }
+    } catch (err: unknown) {
+      let msg = 'Upload failed';
+      if (err && typeof err === 'object') {
+        const o = err as Record<string, unknown>;
+        if (typeof o['error'] === 'object' && o['error'] !== null) {
+          const inner = o['error'] as Record<string, unknown>;
+          if (typeof inner['error'] === 'string') msg = inner['error'];
+        } else if (typeof o['message'] === 'string') msg = o['message'];
+      }
+      toast.error(String(msg));
     }
   }
 
@@ -85,10 +120,17 @@ export default function LogoSetting() {
                 <div className="col-lg-4">
                   <div className="form-group">
                     <label>Select Client <span className="text-warning">*</span></label>
-                    <select className="form-control" value={selectedClient?.id ?? ''} onChange={(e) => setSelectedClient(clients.find(c => String(c.id) === e.target.value) ?? null)}>
-                      <option value="">Select Client</option>
-                      {clients.map(c => <option key={c.id} value={c.id}>{c.text}</option>)}
-                    </select>
+                    <div>
+                      <input className="form-control mb-2" placeholder="Search clients" onChange={(e) => onClientSearch(e.target.value)} />
+                      <select className="form-control" value={selectedClient?.id ?? ''} onChange={(e) => {
+                        const sel = clients.find(c => String(c.id) === e.target.value) ?? null;
+                        setSelectedClient(sel);
+                        if (sel && sel.id) void fetchClientLogo(sel.id);
+                      }} onFocus={() => onClientDropdownOpen()}>
+                        <option value="">Select Client</option>
+                        {clients.map(c => <option key={c.id} value={c.id}>{c.text}</option>)}
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}
