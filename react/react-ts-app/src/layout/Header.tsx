@@ -83,7 +83,7 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
               </button>
               <div className={`dropdown-menu dropdown-menu-right ${open ? 'show' : ''}`} style={{ position: 'absolute' }}>
                 <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); navigate('/profile/update'); }}><i className="ni ni-single-02" /> <span>My profile</span></a>
-                <a className="dropdown-item" href="#"><i className="ni ni-settings-gear-65" /> <span>Settings</span></a>
+                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); navigate('/client-service-settings'); }}><i className="ni ni-settings-gear-65" /> <span>Settings</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-calendar-grid-58" /> <span>Activity</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-support-16" /> <span>Support</span></a>
                 <div className="dropdown-divider" />

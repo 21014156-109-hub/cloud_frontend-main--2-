@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ClientTestSuitService } from '../clientTestSuit.service';
 import type { ClientTestSuitItem } from '../clientTestSuit.service';
-import PaginationLinks from '../../shared-components/PaginationLinks';
+import { PaginationLinks } from '../../components';
 import { toast } from 'react-toastify';
 import { getAuthUserData } from '../../utils/helper';
 import '../../styles/client-test-suit.css';

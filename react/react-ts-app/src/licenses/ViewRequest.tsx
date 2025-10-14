@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import LicenseService from './license.service';
 import { toast } from 'react-toastify';
-import Breadcrumbs from '../shared-components/breadcrumbs/Breadcrumbs';
+import { Breadcrumbs } from '../components';
 import './licenses.css';
 
 export default function ViewRequest() {

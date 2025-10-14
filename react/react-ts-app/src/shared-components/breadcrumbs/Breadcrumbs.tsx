@@ -26,8 +26,8 @@ function mainSectionTitle(pathname: string): string {
   // Licenses pages are part of user/admin management in the app
   if (p.startsWith('/licenses')) return 'User Management';
 
-  // Profile page
-  if (p.startsWith('/profile')) return 'Profile';
+  // Profile pages should show the same label as the header (Profile Settings)
+  if (p.startsWith('/profile')) return 'Profile Settings';
 
   // General Settings
   if (p.startsWith('/device-catalogue')) return 'General Settings';

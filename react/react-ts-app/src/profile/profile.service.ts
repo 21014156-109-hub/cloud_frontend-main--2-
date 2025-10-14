@@ -5,7 +5,7 @@ export class ProfileService {
     return http(`user/info/${id}`);
   }
 
-  async update(body: any) {
+  async update(body: Record<string, unknown>) {
     return http('user/update', { method: 'PATCH', json: body });
   }
 }

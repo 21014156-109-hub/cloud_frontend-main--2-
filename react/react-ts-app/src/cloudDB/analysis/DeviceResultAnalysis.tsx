@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CloudDBService } from '../cloudDB.service';
 import { UserService } from '../../users/user.service';
 import { getAuthUserData } from '../../utils/helper';
-import PaginationLinks from '../../shared-components/PaginationLinks';
+import { PaginationLinks } from '../../components';
 
 interface AnalysisRow {
   id?: number;

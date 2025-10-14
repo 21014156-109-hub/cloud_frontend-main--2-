@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Breadcrumbs from '../shared-components/breadcrumbs/Breadcrumbs';
+import { Breadcrumbs } from '../components';
 import profileSvc from './profile.service';
 import { getAuthUserData, updateAuthUserData } from '../utils/helper';
 import { toast } from 'react-toastify';

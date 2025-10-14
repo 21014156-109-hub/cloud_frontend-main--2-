@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import LicenseService from './license.service';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumbs from '../shared-components/breadcrumbs/Breadcrumbs';
+import { Breadcrumbs } from '../components';
 import './licenses.css';
 
 export default function AdminRequest() {

@@ -3,7 +3,7 @@ import { TestSuitesService } from '../../test-suites/testSuites.service';
 import type { ApiResponse, TestSuiteSummary, PaginatedResponse } from '../../test-suites/testSuites.service';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import PaginationLinks from '../../shared-components/PaginationLinks';
+import { PaginationLinks } from '../../components';
 import { getAuthUserData } from '../../utils/helper';
 
 const svc = new TestSuitesService();

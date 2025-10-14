@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify';
 import { BuildManagementService } from '../build-management.service';
 import './build-management.css';
-import PaginationLinks from '../../shared-components/PaginationLinks';
+import { PaginationLinks } from '../../components';
 
 interface BuildRecord {
   id?: number;
