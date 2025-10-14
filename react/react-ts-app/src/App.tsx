@@ -11,6 +11,7 @@ import UpdateClientTestSuit from './client-test-suit/update/UpdateClientTestSuit
 import WifiProfilesListing from './wifi-profiles/listing/WifiProfilesListing';
 import AddWifiProfile from './wifi-profiles/add/AddWifiProfile';
 import UpdateWifiProfile from './wifi-profiles/update/UpdateWifiProfile';
+import UpdateProfile from './profile/UpdateProfile';
 import WarehouseListing from './warehouses/listing/WarehouseListing';
 import AddWarehouse from './warehouses/add/AddWarehouse';
 import UpdateWarehouse from './warehouses/update/UpdateWarehouse';
@@ -66,6 +67,7 @@ export default function App() {
   <Route path="/wifi-profiles/add" element={<AuthGuard><Layout><AddWifiProfile /></Layout></AuthGuard>} />
   <Route path="/wifi-profiles/update/:id" element={<AuthGuard><Layout><UpdateWifiProfile /></Layout></AuthGuard>} />
   <Route path="/logo-setting" element={<AuthGuard><Layout><LogoSetting /></Layout></AuthGuard>} />
+  <Route path="/profile/update" element={<AuthGuard><Layout><UpdateProfile /></Layout></AuthGuard>} />
   <Route path="/warehouse/listing" element={<AuthGuard><Layout><WarehouseListing /></Layout></AuthGuard>} />
   <Route path="/warehouse/add" element={<AuthGuard><Layout><AddWarehouse /></Layout></AuthGuard>} />
   <Route path="/warehouse/update/:id" element={<AuthGuard><Layout><UpdateWarehouse /></Layout></AuthGuard>} />

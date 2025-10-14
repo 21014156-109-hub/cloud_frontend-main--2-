@@ -28,7 +28,8 @@ export default function WifiProfilesListing() {
         const recs = data?.data ?? [];
         setRecords(recs);
       }
-    } catch {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load wifi profiles');
     }
   }, [pageSize]);
@@ -52,7 +53,10 @@ export default function WifiProfilesListing() {
       } else {
         toast.error('Not Deleted: Wifi Profile is Assigned to Some Station');
       }
-    } catch { toast.error('Delete failed'); }
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
+      toast.error('Delete failed');
+    }
   }
 
   const filtered = records.filter(r => {

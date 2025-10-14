@@ -27,8 +27,10 @@ export default function AssignTestSuitesList() {
         const data = (payload?.data as AssignmentSummary[] | undefined) ?? [];
         setRecords(data);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Failed to load assignments', err);
+      // If auth has expired, http.ts already handled logout + toast + redirect
+  if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load assignments');
     }
   }, [pageSize]);
@@ -40,8 +42,9 @@ export default function AssignTestSuitesList() {
       const res = await svc.deleteAssignment(id) as ApiResponse<Record<string, unknown>>;
   if (res.status) { toast.success('Deleted'); await fetchData(1); }
   else toast.error(res.message || 'Failed to delete');
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Delete assignment failed', err);
+  if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to delete');
     }
   }

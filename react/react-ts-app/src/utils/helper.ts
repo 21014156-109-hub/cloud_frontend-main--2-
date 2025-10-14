@@ -81,3 +81,16 @@ export function getClientID(): number {
   const stored = localStorage.getItem('clientId');
   return stored ? Number(stored) : 0;
 }
+
+// Update the stored user data (both runtime AuthConfig and localStorage)
+export function updateAuthUserData(current: AuthUserData | null, updates: Partial<AuthUserData>): boolean {
+  const base = (current && Object.keys(current).length > 0) ? current : (() => {
+    try { return JSON.parse(localStorage.getItem('userData') || '{}') as AuthUserData; } catch { return {} as AuthUserData; }
+  })();
+
+  const merged: AuthUserData = { ...(base as AuthUserData), ...(updates as AuthUserData) };
+  AuthConfig.USER_DATA = JSON.stringify(merged);
+  // keep token/client id as-is
+  localStorage.setItem('userData', AuthConfig.USER_DATA);
+  return true;
+}

@@ -36,7 +36,8 @@ export default function AddTestSuitesAssignment({ onClose, onSuccess }: { onClos
     try {
       const res = await userService.getRecords(0, 'tester', '1', term);
       if (res.status) setTesters(res.data);
-    } catch {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load testers');
     }
   }, [userService]);
@@ -53,7 +54,8 @@ export default function AddTestSuitesAssignment({ onClose, onSuccess }: { onClos
           : items;
         setClientSuites(filtered);
       }
-    } catch {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load client test suites');
     }
   }, [auth, clientSuitService]);
@@ -80,7 +82,8 @@ export default function AddTestSuitesAssignment({ onClose, onSuccess }: { onClos
       } else {
         toast.error(res.message || 'Assignment failed');
       }
-    } catch (err) {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       const msg = (typeof err === 'object' && err && 'error' in err) ? (err as { error?: { message?: string } }).error?.message : 'Assignment failed';
       toast.error(msg || 'Assignment failed');
     } finally {

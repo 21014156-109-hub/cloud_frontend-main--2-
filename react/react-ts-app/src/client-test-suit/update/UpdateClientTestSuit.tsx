@@ -51,7 +51,8 @@ export default function UpdateClientTestSuit() {
             setClientSelections(new Set(cSel.map(t => t.key)));
           }
         }
-      } catch {
+      } catch (err: unknown) {
+        if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
         toast.error('Failed to load test suite');
       } finally {
         setIsLoading(false);

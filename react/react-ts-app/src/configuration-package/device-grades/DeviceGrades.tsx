@@ -18,7 +18,8 @@ export default function DeviceGrades() {
         } else {
           toast.error(resp.message || 'Failed to load grades');
         }
-      } catch (err) {
+      } catch (err: unknown) {
+        if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
         let msg = 'Failed to load grades';
         if (err && typeof err === 'object' && 'message' in err) {
           const rec = err as unknown as Record<string, unknown>;
@@ -50,7 +51,10 @@ export default function DeviceGrades() {
       const resp = await svc.updateClientGrades(cleaned);
       if (resp.status) { toast.success(resp.message || 'Grades updated'); await load(); }
       else { toast.error(resp.message || 'Failed to update grades'); }
-    } catch { toast.error('Failed to update grades'); } finally { setSaving(false); }
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') { setSaving(false); return; }
+      toast.error('Failed to update grades');
+    } finally { setSaving(false); }
   }
 
   return (

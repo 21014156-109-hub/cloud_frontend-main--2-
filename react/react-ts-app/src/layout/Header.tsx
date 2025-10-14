@@ -1,9 +1,10 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { Breadcrumbs } from '../components';
+import { useNavigate } from 'react-router-dom';
 import { getAuthUserData, unsetAuthUserData } from '../utils/helper';
 
 export default function Header({ onToggle }: { onToggle?: () => void }) {
   const user = useMemo(() => getAuthUserData(), []);
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLLIElement | null>(null);
 
@@ -27,7 +28,6 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
           <button className="btn btn-link text-white p-0 mr-3 d-md-none" onClick={toggleSidebarFromHeader} aria-label="Toggle sidebar">
             <i className="ni ni-bullet-list-67" style={{ fontSize: '1.25rem' }} />
           </button>
-          <Breadcrumbs />
           <ul className="navbar-nav align-items-center d-none d-md-flex ml-auto">
             <li className={`nav-item dropdown ${open ? 'show' : ''}`} ref={toggleRef}>
               <button
@@ -47,7 +47,7 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
                 </div>
               </button>
               <div className={`dropdown-menu dropdown-menu-right ${open ? 'show' : ''}`} style={{ position: 'absolute' }}>
-                <a className="dropdown-item" href="#"><i className="ni ni-single-02" /> <span>My profile</span></a>
+                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); navigate('/profile/update'); }}><i className="ni ni-single-02" /> <span>My profile</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-settings-gear-65" /> <span>Settings</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-calendar-grid-58" /> <span>Activity</span></a>
                 <a className="dropdown-item" href="#"><i className="ni ni-support-16" /> <span>Support</span></a>

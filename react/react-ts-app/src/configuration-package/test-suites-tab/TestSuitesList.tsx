@@ -30,7 +30,8 @@ export default function TestSuitesList() {
         setTotalPages(payload.totalPages ?? 0);
         setTotalRecords(payload.totalItems ?? rows.length);
       }
-    } catch {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load test suites');
     }
   }, [pageSize]);

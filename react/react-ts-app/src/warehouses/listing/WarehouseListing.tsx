@@ -20,7 +20,8 @@ export default function WarehouseListing() {
         const data = resp.data || {};
         setRecords(data.data || []);
       }
-    } catch {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load warehouses');
     }
   }, [clientId, pageSize]);
@@ -33,7 +34,10 @@ export default function WarehouseListing() {
     try {
       const r = await svc.deleteWarehouse(String(id));
       if (r.status) { toast.success('Deleted'); fetchData(1); }
-    } catch { toast.error('Delete failed'); }
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
+      toast.error('Delete failed');
+    }
   }
 
   return (

@@ -27,7 +27,8 @@ export default function ClientTestSuitListing() {
         setRecords(response.data.data);
         setAllRecords(response.data.data);
       }
-    } catch {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === 'AUTH_EXPIRED') return;
       toast.error('Failed to load client test suites');
     }
   }, [pageSize, service]);
