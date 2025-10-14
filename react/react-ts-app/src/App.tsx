@@ -23,6 +23,7 @@ import ConfigurationPackage from './configuration-package/ConfigurationPackage';
 import TestSuitesTab from './configuration-package/test-suites-tab/TestSuitesTab';
 import AssignTestSuitesTab from './configuration-package/assign-test-suites-tab/AssignTestSuitesTab';
 import MonthlyReport from './reporting/monthly-report/MonthlyReport';
+import DeviceReport from './device-report/DeviceReport';
 import AddTestSuitesAssignment from './configuration-package/assign-test-suites-tab/AddTestSuitesAssignment';
 import './App.css';
 import LogoSetting from './logo-setting/LogoSetting';
@@ -46,6 +47,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
     <Route path="/dashboard" element={<AuthGuard><Layout><Dashboard /></Layout></AuthGuard>} />
+    {/* Public device report route so QR links can be opened directly without auth */}
+    <Route path="/device-report" element={<DeviceReport />} />
         <Route path="/build-management/listing" element={<AuthGuard><AdminGuard><Layout><BuildManagement /></Layout></AdminGuard></AuthGuard>} />
   <Route path="/client-service-settings" element={<AuthGuard><Layout><ClientServiceSettings /></Layout></AuthGuard>} />
   <Route path="/client-test-suit/listing" element={<AuthGuard><Layout><ClientTestSuitListing /></Layout></AuthGuard>} />

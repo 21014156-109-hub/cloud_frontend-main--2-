@@ -11,7 +11,8 @@ type Column = { prop: string; name: string; visible: boolean };
 export default function MonthlyReport() {
   const user = getAuthUserData();
   const isAdmin = user?.roleSlug === 'admin';
-  const [clientId] = useState<number | ''>(isAdmin ? 0 : (user?.id ?? ''));
+  const [clientId, setClientId] = useState<number | string | ''>(isAdmin ? 0 : (user?.id ?? ''));
+  const [clientArray, setClientArray] = useState<{ id: number | string; text: string }[]>([]);
   const [reports, setReports] = useState<Record<string, unknown>[]>([]);
   const [testers, setTesters] = useState<Record<string, unknown>[]>([]);
   const [allTesters, setAllTesters] = useState<Record<string, unknown>[]>([]);
@@ -30,6 +31,19 @@ export default function MonthlyReport() {
   const topInnerRef = useRef<HTMLDivElement | null>(null);
 
   const dateOptions = ['Today', 'Yesterday', 'This Week', 'Last Week', 'This Month', 'Last Month', 'This Year', 'Last Year', 'Custom'];
+
+  // Populate clients for admin users
+  async function getClients(search = '') {
+    try {
+      const res = await reporting.getUsers('client', '1', search);
+      if (res && (res as any).status) {
+        const list = (res as any).data || [];
+        setClientArray(list.map((c: any) => ({ id: c.id, text: `${c.fName || ''} ${c.lName || ''} (${c.userName || ''})` })));
+      }
+    } catch (err) {
+      // ignore
+    }
+  }
 
   
 
@@ -67,6 +81,15 @@ export default function MonthlyReport() {
   }, [clientId, getSelectedRange]);
 
   useEffect(() => { fetchReport(); }, [fetchReport]);
+
+  // Set up breadcrumb and initial data similar to Angular
+  useEffect(() => {
+    const w = window as Window & { __BREADCRUMB?: { name: string; link?: string }[] };
+    w.__BREADCRUMB = [{ name: 'Dashboard', link: '/dashboard' }, { name: 'User Activity Report', link: '' }];
+    if (isAdmin) getClients();
+    else fetchReport();
+    return () => { w.__BREADCRUMB = []; };
+  }, []);
 
   function findDeviceCount(testerId: number, date: string): number {
     const repIndex = reports.findIndex((item) => {
@@ -135,6 +158,15 @@ export default function MonthlyReport() {
                         {dateOptions.map((d, i) => <option key={i} value={i}>{d}</option>)}
                       </select>
                     </div>
+                    {isAdmin && (
+                      <div style={{ marginLeft: 8, width: 300 }}>
+                        <label className="form-control-label" style={{ display: 'block', marginBottom: 6 }}>Select Client</label>
+                        <select className="form-control" value={String(clientId)} onChange={(e) => { const v = e.target.value; setClientId(v); }}>
+                          <option value="">-- Select --</option>
+                          {clientArray.map(c => <option key={String(c.id)} value={String(c.id)}>{c.text}</option>)}
+                        </select>
+                      </div>
+                    )}
                     <div style={{ marginLeft: 20 , marginTop: 26, backgroundColor: '#06d606',color: '#fff', }}>
                       <button className="btn btn-submit" onClick={fetchReport} disabled={!clientId && isAdmin}>Submit</button>
                     </div>
