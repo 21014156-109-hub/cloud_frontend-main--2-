@@ -30,6 +30,10 @@ export class UserService {
     return this.http(`user/getUserListing?clientId=${clientId}&page=${page}&size=${size}`);
   }
 
+  getTesterListing(clientId: number, page: number, size: number, search: string) {
+    return this.http(`user/getTesterListing?clientId=${clientId}&page=${page}&size=${size}&search=${encodeURIComponent(search || '')}`);
+  }
+
   getRecord(id: string) {
     return this.http(`user/info/${id}`);
   }

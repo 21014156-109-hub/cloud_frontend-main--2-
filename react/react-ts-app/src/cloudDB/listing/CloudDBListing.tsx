@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
+import { BASE_URL_UI } from '../../services/config';
 import { CloudDBService } from '../cloudDB.service';
 import { UserService } from '../../users/user.service';
 import PaginationLinks from '../../shared-components/PaginationLinks';
@@ -217,7 +218,8 @@ export default function CloudDBListing() {
 
   function deviceReport(id?: number) {
     if (typeof id !== 'number') return;
-    const baseUrl = (window as any).__VITE_BASE_URL_UI || (typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_BASE_URL_UI : undefined) || window.location.origin;
+  // Use centralized UI base URL from config (aligned with Angular environment.base_url_ui)
+  const baseUrl: string = BASE_URL_UI || window.location.origin;
     const url = `${String(baseUrl).replace(/\/$/, '')}/device-report?id=${id}`;
     window.open(url, '_blank');
   }

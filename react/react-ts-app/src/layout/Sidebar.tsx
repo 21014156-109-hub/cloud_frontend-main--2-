@@ -37,9 +37,11 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
       // Clients Management should be visible so users can access listing; keep other children restricted
       { title: 'Clients Management', route: '/users/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-single-02 text-orange' },
       { title: 'Warehouse Management', route: '/warehouse/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
-    { title: 'Testers Management', route: '/testers/listing', isCollapsed: false, isHidden: isHiddenForAdmin, iconClass: 'ni ni-basket text-success' },
-    { title: 'Stations Management', route: '/stations/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
-    { title: 'Tester Assignment', route: '/stations-assignment/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
+      { title: 'Testers Management', route: '/testers/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-badge text-success' },
+      { title: 'Add Tester', route: '/testers/add', isCollapsed: false, isHidden: false, iconClass: '' },
+      { title: 'Stations Management', route: '/stations/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
+      { title: 'Tester Assignment', route: '/stations-assignment/listing', isCollapsed: false, isHidden: false, iconClass: 'ni ni-basket text-success' },
+      { title: 'Assign Stations', route: '/stations-assignment/add', isCollapsed: false, isHidden: false, iconClass: '' },
       { title: 'License Request ', route: `/licenses/${isAdmin ? 'admin-request' : 'request'}`, isCollapsed: false, isHidden: false, iconClass: '' },
     ]},
     { title: 'General Settings', route: '', isCollapsed: true, isHidden: isHiddenForAdmin, iconClass: 'ni ni-app text-primary', children: [

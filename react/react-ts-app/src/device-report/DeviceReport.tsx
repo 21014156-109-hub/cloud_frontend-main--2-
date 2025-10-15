@@ -6,6 +6,7 @@ import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
 import QRCode from 'qrcode';
 import '../styles/cloudDB-listing.css';
+import { BASE_URL_UI } from '../services/config';
 
 const svc = new CloudDBService();
 const logoSvc = new LogosService();
@@ -89,8 +90,8 @@ export default function DeviceReport() {
       setCountPassed(passed);
       setTestRecords(tests);
 
-    // Use Vite env that mirrors Angular's environment.base_url_ui when available
-    const baseUrl = (import.meta as any).env?.VITE_BASE_URL_UI || window.location.origin;
+  // Use env that mirrors Angular's environment.base_url_ui
+  const baseUrl = BASE_URL_UI || window.location.origin;
     const qdata = `${baseUrl.replace(/\/$/, '')}/device-report?id=${record.transactionId}&IMEI=${record.imei}`;
   setQrcodedata(qdata);
   QRCode.toDataURL(qdata).then((url: string) => setQrCodeImageUrl(url)).catch((e: any) => console.error(e));

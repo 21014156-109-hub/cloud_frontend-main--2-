@@ -22,7 +22,7 @@ html, body {
 .screen {
   background: linear-gradient(90deg, #273143, #273143);
   position: relative;
-  height: 600px;
+  height: 635px;
   width: 70%;
   min-width: 388px;
   max-width: 390px;

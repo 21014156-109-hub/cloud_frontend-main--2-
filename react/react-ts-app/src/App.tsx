@@ -41,6 +41,9 @@ import LogoSetting from './logo-setting/LogoSetting';
 import UsersListing from './users/listing/UsersListing';
 import AddUser from './users/add/AddUser';
 import UpdateUser from './users/update/UpdateUser';
+import TestersListing from './testers/listing/TestersListing';
+import AddTester from './testers/add/AddTester';
+import UpdateTester from './testers/update/UpdateTester';
 import RequestListing from './licenses/RequestListing';
 import AddRequest from './licenses/AddRequest';
 import AdminRequest from './licenses/AdminRequest';
@@ -61,8 +64,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
     <Route path="/dashboard" element={<AuthGuard><Layout><Dashboard /></Layout></AuthGuard>} />
-    {/* Public device report route so QR links can be opened directly without auth */}
-    <Route path="/device-report" element={<DeviceReport />} />
+  {/* Device report route aligned with Angular (behind AuthGuard, no Layout) */}
+  <Route path="/device-report" element={<AuthGuard><DeviceReport /></AuthGuard>} />
         <Route path="/build-management/listing" element={<AuthGuard><AdminGuard><Layout><BuildManagement /></Layout></AdminGuard></AuthGuard>} />
   <Route path="/client-service-settings" element={<AuthGuard><Layout><ClientServiceSettings /></Layout></AuthGuard>} />
   <Route path="/client-test-suit/listing" element={<AuthGuard><Layout><ClientTestSuitListing /></Layout></AuthGuard>} />
@@ -80,6 +83,13 @@ export default function App() {
   <Route path="/users/listing" element={<AuthGuard><Layout><UsersListing /></Layout></AuthGuard>} />
   <Route path="/users/add" element={<AuthGuard><Layout><AddUser /></Layout></AuthGuard>} />
   <Route path="/users/update/:id" element={<AuthGuard><Layout><UpdateUser /></Layout></AuthGuard>} />
+  {/* Testers */}
+  <Route path="/testers/listing" element={<AuthGuard><Layout><TestersListing /></Layout></AuthGuard>} />
+  <Route path="/testers/add" element={<AuthGuard><Layout><AddTester /></Layout></AuthGuard>} />
+  <Route path="/testers/update/:id" element={<AuthGuard><Layout><UpdateTester /></Layout></AuthGuard>} />
+  {/* Angular-style aliases */}
+  <Route path="/testers/add-tester" element={<AuthGuard><Layout><AddTester /></Layout></AuthGuard>} />
+  <Route path="/testers/update-tester/:id" element={<AuthGuard><Layout><UpdateTester /></Layout></AuthGuard>} />
   <Route path="/configuration-package" element={<AuthGuard><Layout><ConfigurationPackage /></Layout></AuthGuard>} />
   <Route path="/licenses/listing" element={<AuthGuard><Layout><LicensesListing /></Layout></AuthGuard>} />
   <Route path="/licenses/add" element={<AuthGuard><Layout><AddLicenseRequest /></Layout></AuthGuard>} />
@@ -113,7 +123,8 @@ export default function App() {
   {/* Alias Angular-style assignment routes to React pages */}
   <Route path="/test-suites-assignment/add" element={<AuthGuard><Layout><AddTestSuitesAssignment /></Layout></AuthGuard>} />
   <Route path="/test-suites-assignment/update/:id" element={<AuthGuard><Layout><UpdateClientTestSuit /></Layout></AuthGuard>} />
-        <Route path="*" element={<Login />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="*" element={<Login />} />
       </Routes>
       </SharedProvider>
     </BrowserRouter>
