@@ -23,9 +23,21 @@ export default function WifiProfilesListing() {
     try {
       const resp = await svc.getWifiProfilesList(p - 1, pageSize);
       if (resp.status) {
-        const data = resp.data as { data?: WifiRecord[] } | undefined;
-        // normalize expected structure: { totalItems, totalPages, data }
-        const recs = data?.data ?? [];
+        // resp.data shape can differ between endpoints/environments:
+        // - { totalItems, totalPages, currentPage, data: [...] }
+        // - or directly an array [...]
+        // Normalize both shapes into an array of records.
+  console.debug('[WifiProfilesListing] response', resp);
+        const payload: unknown = resp.data;
+        type DataShape = { data?: WifiRecord[] };
+        let recs: WifiRecord[] = [];
+        if (!payload) recs = [];
+        else if (Array.isArray(payload)) recs = payload as WifiRecord[];
+        else if (typeof payload === 'object' && payload !== null) {
+          const p = payload as DataShape;
+          if (Array.isArray(p.data)) recs = p.data as WifiRecord[];
+          else recs = [];
+        } else recs = [];
         setRecords(recs);
       }
     } catch (err: unknown) {

@@ -33,6 +33,7 @@ import ViewDeviceCatalogue from './device-catalogue/ViewDeviceCatalogue';
 import ConfigurationPackage from './configuration-package/ConfigurationPackage';
 import TestSuitesTab from './configuration-package/test-suites-tab/TestSuitesTab';
 import AssignTestSuitesTab from './configuration-package/assign-test-suites-tab/AssignTestSuitesTab';
+import AddTestSuite from './test-suites/AddTestSuite';
 import MonthlyReport from './reporting/monthly-report/MonthlyReport';
 import DeviceReport from './device-report/DeviceReport';
 import AddTestSuitesAssignment from './configuration-package/assign-test-suites-tab/AddTestSuitesAssignment';
@@ -119,6 +120,7 @@ export default function App() {
   <Route path="/warehouse/update/:id" element={<AuthGuard><Layout><UpdateWarehouse /></Layout></AuthGuard>} />
   {/* Direct routes for listings to match Angular-style links */}
   <Route path="/test-suites/listing" element={<AuthGuard><Layout><TestSuitesTab /></Layout></AuthGuard>} />
+  <Route path="/test-suites/add-test-suite" element={<AuthGuard><AdminGuard><Layout><AddTestSuite /></Layout></AdminGuard></AuthGuard>} />
   <Route path="/test-suites-assignment/listing" element={<AuthGuard><Layout><AssignTestSuitesTab /></Layout></AuthGuard>} />
   {/* Alias Angular-style assignment routes to React pages */}
   <Route path="/test-suites-assignment/add" element={<AuthGuard><Layout><AddTestSuitesAssignment /></Layout></AuthGuard>} />

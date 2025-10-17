@@ -19,6 +19,9 @@ async function http(path: string, opts: Options = {}) {
 
   const body = opts.json !== undefined ? JSON.stringify(opts.json) : opts.body;
 
+  // Debug log to help diagnose missing token on refresh issues
+  try { console.debug('[http] request', { url: `${BASE_LOGIN_URL}${path}`, method: opts.method || 'GET', hasToken: !!token }); } catch {}
+
   const res = await fetch(`${BASE_LOGIN_URL}${path}`, {
     ...opts,
     headers,

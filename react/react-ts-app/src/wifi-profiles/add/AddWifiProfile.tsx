@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { WifiProfilesService } from '../wifiProfiles.service';
-import http from '../../services/http';
+import { WarehouseService } from '../../warehouses/warehouse.service';
+import { getClientID } from '../../utils/helper';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const svc = new WifiProfilesService();
-const whSvc = { getCollectionInfo: () => http('warehouse') };
+const warehouseSvc = new WarehouseService();
 
 export default function AddWifiProfile() {
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ export default function AddWifiProfile() {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await whSvc.getCollectionInfo();
+        const clientId = getClientID();
+        const resp = await warehouseSvc.getCollectionInfoById(clientId || 0, '1');
         if (resp.status) setWarehouses(resp.data || []);
       } catch {
         // ignore

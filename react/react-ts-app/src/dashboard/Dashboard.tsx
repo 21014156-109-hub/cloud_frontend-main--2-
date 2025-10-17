@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { DashboardService } from './dashboard.service';
 import { getAuthUserData } from '../utils/helper';
 import './dashboard.css';
+import { toast } from 'react-toastify';
 
 Chart.register(...registerables);
 
@@ -88,8 +89,9 @@ const Dashboard: React.FC = () => {
         if (devicesTypeChart.current) devicesTypeChart.current.destroy();
         if (devicesTypeRef.current) devicesTypeChart.current = new Chart(devicesTypeRef.current, { type: 'pie', data });
       }
-    } catch (err) {
+      } catch (err) {
       console.error(err);
+      toast.error('Failed to load device type counts');
     }
   }
 
@@ -103,7 +105,7 @@ const Dashboard: React.FC = () => {
         if (esnServicesChart.current) esnServicesChart.current.destroy();
         if (esnServicesRef.current) esnServicesChart.current = new Chart(esnServicesRef.current, { type: 'pie', data: { labels, datasets: [{ data: counts }] } });
       }
-    } catch (err) { console.error(err); }
+  } catch (err) { console.error(err); }
   }
 
   async function processedDevicesCountByDate(searchType: string) {
@@ -120,7 +122,7 @@ const Dashboard: React.FC = () => {
           options: { maintainAspectRatio: false, responsive: true }
         });
       }
-    } catch (err) { console.error(err); }
+  } catch (err) { console.error(err); }
   }
 
   async function getDevicesCountOfTopUsers() {
@@ -140,6 +142,10 @@ const Dashboard: React.FC = () => {
     try {
       const result = await dashboardService.getCount();
       if (result.status) setStatCounts(result.data);
+      else {
+        console.debug('[Dashboard] getCount returned:', result);
+        toast.error('Failed to load dashboard stats');
+      }
     } catch (err) { console.error(err); }
   }
 

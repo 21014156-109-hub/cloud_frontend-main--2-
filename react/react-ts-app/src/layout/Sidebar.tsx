@@ -82,7 +82,11 @@ export default function Sidebar({ pinned, onToggle }: { pinned?: boolean; onTogg
   }
 
   return (
-  <nav className={`sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white ${isPinned ? 'nav-width' : ''}`} id="sidenav-main">
+  <nav
+    className={`sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light ${isPinned ? 'nav-width' : ''}`}
+    id="sidenav-main"
+    style={{ background: 'var(--sidebar-bg)' }}
+  >
       <div className="scrollbar-inner">
         <div className="sidenav-header d-flex align-items-center">
           <Link className="navbar-brand" to="/dashboard">

@@ -30,18 +30,13 @@ export default function RequestListing() {
 
       <div className="row">
         <div className="col-xl-12">
-          <div className="card mb-3">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <h3 className="mb-0">License Requests</h3>
-              <button className="btn btn-add-request" onClick={() => navigate('/licenses/add-request')}>+ Add Request</button>
-            </div>
+          <div className="card mb-2">
             <div className="card-body d-flex justify-content-between align-items-center">
               <button className="btn btn-add-request" onClick={() => navigate('/licenses/add-request')}>
                 <i className="fa fa-plus" style={{ marginRight: 8 }} /> Add Request
               </button>
             </div>
           </div>
-
           <div className="card">
             <div className="card-body">
               <div className="accordion-section">

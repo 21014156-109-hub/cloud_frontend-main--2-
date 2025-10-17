@@ -95,9 +95,6 @@ export function updateAuthUserData(current: AuthUserData | null, updates: Partia
   return true;
 }
 
-// Angular parity: simple placeholder for permission checks
-// Keep signature simple; extend when real permission logic is available
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function checkPermission(_slug?: string): boolean {
   return true;
 }

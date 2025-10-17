@@ -182,7 +182,6 @@ export default function MonthlyReport() {
                   {isCustomSelected && (
                     <div className="d-flex gap-2 justify-content-center">
                       <input type="date" className="form-control" value={selectedDateArray[0] ?? ''} onChange={(e) => onCustomDateChange(0, e.target.value)} />
-                      <input type="date" className="form-control" value={selectedDateArray[1] ?? ''} onChange={(e) => onCustomDateChange(1, e.target.value)} />
                     </div>
                   )}
                 </div>

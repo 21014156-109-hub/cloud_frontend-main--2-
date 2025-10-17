@@ -6,6 +6,9 @@
   --sidebar-collapsed: 62px; /* smaller collapsed width so icons-only fits */
   --sidebar-expanded: 250px; /* increased expanded width */
   --header-height: 75px; /* increased header height for more vertical space */
+  /* Themeable colors (can be overridden by runtime settings) */
+  --header-bg: #273245; /* default header background */
+  --sidebar-bg: #ffffff; /* default sidebar background */
 }
 
 /* Reset */
@@ -108,7 +111,7 @@ nav.sidenav.nav-width + .main-content,
   height: var(--header-height);
   display: flex;
   align-items: center;
-  background: #273245;
+  background: var(--header-bg);
   color: #fff;
 }
 

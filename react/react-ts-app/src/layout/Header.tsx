@@ -2,6 +2,8 @@ import { useMemo, useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getAuthUserData, unsetAuthUserData } from '../utils/helper';
 import { Breadcrumbs } from '../components';
+import theme, { DEFAULT_HEADER_COLORS, DEFAULT_SIDEBAR_COLORS } from '../utils/theme';
+import type { ThemeColors } from '../utils/theme';
 
 export default function Header({ onToggle }: { onToggle?: () => void }) {
   const user = useMemo(() => getAuthUserData(), []);
@@ -82,6 +84,44 @@ export default function Header({ onToggle }: { onToggle?: () => void }) {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <div style={{ flex: 1 }} />
             <ul className="navbar-nav align-items-center d-none d-md-flex ml-auto">
+              {/* Settings icon - theme customizer */}
+              <li className="nav-item mr-2" style={{ position: 'relative' }}>
+                <button
+                  className="btn btn-link text-white p-0"
+                  aria-label="Header settings"
+                  onClick={(e) => { e.stopPropagation(); const el = document.getElementById('header-theme-menu'); if (el) el.classList.toggle('show'); }}
+                  type="button"
+                >
+                  <i className="fa fa-cog" aria-hidden="true" style={{ fontSize: '1.1rem' }} />
+                </button>
+                <div id="header-theme-menu" className="dropdown-menu dropdown-menu-right" style={{ position: 'absolute', right: 0, minWidth: 220 }}>
+                  <div style={{ padding: 8 }}>
+                    <div style={{ fontWeight: 600, marginBottom: 6 }}>Header color</div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {DEFAULT_HEADER_COLORS.map((c) => (
+                        <button key={c} title={c} onClick={() => { theme.saveTheme({ header: c } as ThemeColors); }} style={{ width: 28, height: 28, borderRadius: 4, border: '1px solid #ddd', background: c }} />
+                      ))}
+                    </div>
+                    <div style={{ height: 8 }} />
+                    <div style={{ fontWeight: 600, marginBottom: 6 }}>Sidebar color</div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {DEFAULT_SIDEBAR_COLORS.map((c) => (
+                        <button key={c} title={c} onClick={() => { theme.saveTheme({ sidebar: c } as ThemeColors); }} style={{ width: 28, height: 28, borderRadius: 4, border: '1px solid #ddd', background: c }} />
+                      ))}
+                    </div>
+                    <div style={{ height: 8 }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                      <button className="btn btn-sm btn-outline-secondary" onClick={() => { theme.saveTheme({}); }}>
+                        Reset
+                      </button>
+                      <button className="btn btn-sm btn-primary" onClick={() => { document.getElementById('header-theme-menu')?.classList.remove('show'); }}>
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
               <li className={`nav-item dropdown ${open ? 'show' : ''}`} ref={toggleRef}>
                 <button
                   className={`nav-link pr-0 dropdown-toggle d-flex align-items-center btn btn-link ${open ? 'show' : ''}`}

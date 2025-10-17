@@ -25,4 +25,8 @@ export class TestSuitesService {
   async deleteTestSuite(id: number): Promise<ApiResponse<unknown>> {
     return http(`test-suits/${id}`, { method: 'DELETE' });
   }
+
+  async createTestSuite(body: { testSuitName: string; description?: string; testPlan: { key: string; value: string }[]; active?: boolean }) {
+    return http('test-suits', { method: 'POST', json: body });
+  }
 }

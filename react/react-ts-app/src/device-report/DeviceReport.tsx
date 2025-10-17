@@ -55,7 +55,8 @@ export default function DeviceReport() {
   }
 
   async function getBase64ImageFromUrl(url: string) {
-    const res = await fetch(url);
+    const token = window.localStorage.getItem('token') || '';
+    const res = await fetch(url, token ? { headers: { token } } : undefined);
     const blob = await res.blob();
     return await new Promise<string | null>((resolve) => {
       const reader = new FileReader();
